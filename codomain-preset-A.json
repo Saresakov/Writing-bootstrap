@@ -1,0 +1,1043 @@
+{
+  "schema": "corpus-to-codomain/1",
+  "createdAt": "2026-10-15T08:15:42.850Z",
+  "preset": "A",
+  "parameters": {
+    "language": "id",
+    "mode": "raw",
+    "stopList": "id",
+    "custom": "",
+    "protect": true,
+    "punctuation": "separate",
+    "ngram": 3,
+    "qLow": 25,
+    "qHigh": 75,
+    "normalization": "nfkc",
+    "caseFold": true,
+    "paragraphBins": "quantile",
+    "shortMax": 35,
+    "mediumMax": 100,
+    "weights": [
+      40,
+      30,
+      30
+    ],
+    "edgeMin": 1
+  },
+  "styleSignature": {
+    "lexical": {
+      "tokens": 2065,
+      "types": 892,
+      "ttr": 0.432,
+      "mattr": 0.865,
+      "mattrWindow": 50,
+      "avgLength": 6.375,
+      "repeatRate": 0.568,
+      "wordLengths": {
+        "1": 4,
+        "2": 37,
+        "3": 122,
+        "4": 410,
+        "5": 357,
+        "6": 263,
+        "7": 270,
+        "8": 179,
+        "9": 153,
+        "10": 109,
+        "11": 89,
+        "12": 35,
+        "13": 12,
+        "14": 8,
+        "15": 12,
+        "16": 4,
+        "17": 1
+      },
+      "mostCommon": [
+        [
+          "yang",
+          105
+        ],
+        [
+          "kita",
+          48
+        ],
+        [
+          "dan",
+          45
+        ],
+        [
+          "atau",
+          29
+        ],
+        [
+          "di",
+          29
+        ],
+        [
+          "itu",
+          29
+        ],
+        [
+          "politik",
+          28
+        ],
+        [
+          "tidak",
+          27
+        ],
+        [
+          "dari",
+          25
+        ],
+        [
+          "untuk",
+          24
+        ],
+        [
+          "dengan",
+          20
+        ],
+        [
+          "ini",
+          18
+        ],
+        [
+          "dalam",
+          16
+        ],
+        [
+          "harus",
+          14
+        ],
+        [
+          "oleh",
+          13
+        ],
+        [
+          "sebagai",
+          13
+        ],
+        [
+          "mereka",
+          12
+        ],
+        [
+          "adalah",
+          11
+        ],
+        [
+          "para",
+          11
+        ],
+        [
+          "ada",
+          10
+        ]
+      ],
+      "capitalizedCandidates": [
+        [
+          "RUU",
+          5
+        ],
+        [
+          "Kita",
+          4
+        ],
+        [
+          "Politik",
+          3
+        ],
+        [
+          "Namun",
+          3
+        ],
+        [
+          "Pada",
+          3
+        ],
+        [
+          "Semua",
+          3
+        ],
+        [
+          "Memang",
+          2
+        ],
+        [
+          "Ketika",
+          2
+        ],
+        [
+          "Thompson",
+          2
+        ]
+      ]
+    },
+    "syntax": {
+      "sentenceCount": 107,
+      "meanSentence": 19.299,
+      "variance": 89.275,
+      "punctuation": {
+        ".": 108,
+        "“": 17,
+        "”": 17,
+        ",": 134,
+        ":": 10,
+        "—": 16,
+        "?": 1,
+        ";": 3,
+        "/": 1
+      },
+      "passiveCandidates": 68,
+      "markers": {
+        "contrast": 5,
+        "cause": 11,
+        "addition": 13,
+        "conditional": 4,
+        "epistemic": 3,
+        "negation": 36,
+        "example": 0,
+        "definition": 12,
+        "evidence": 3,
+        "coordination": 79
+      }
+    },
+    "paragraphs": [
+      {
+        "id": 1,
+        "wordCount": 13,
+        "sentences": 1,
+        "meanSentence": 13,
+        "ttr": 0.923,
+        "lengthBand": "Short",
+        "position": 0,
+        "wordLength": {
+          "3": 1,
+          "4": 1,
+          "5": 2,
+          "6": 1,
+          "7": 4,
+          "8": 1,
+          "10": 1,
+          "11": 1,
+          "12": 1
+        },
+        "markerCounts": {
+          "addition": 1,
+          "coordination": 2
+        }
+      },
+      {
+        "id": 2,
+        "wordCount": 21,
+        "sentences": 1,
+        "meanSentence": 21,
+        "ttr": 1,
+        "lengthBand": "Short",
+        "position": 0.037,
+        "wordLength": {
+          "2": 2,
+          "3": 1,
+          "4": 8,
+          "5": 3,
+          "6": 2,
+          "7": 4,
+          "15": 1
+        },
+        "markerCounts": {}
+      },
+      {
+        "id": 3,
+        "wordCount": 59,
+        "sentences": 3,
+        "meanSentence": 19.667,
+        "ttr": 0.864,
+        "lengthBand": "Short",
+        "position": 0.074,
+        "wordLength": {
+          "2": 1,
+          "3": 1,
+          "4": 14,
+          "5": 16,
+          "6": 8,
+          "7": 6,
+          "8": 5,
+          "9": 6,
+          "10": 1,
+          "12": 1
+        },
+        "markerCounts": {
+          "coordination": 3,
+          "negation": 3,
+          "contrast": 1
+        }
+      },
+      {
+        "id": 4,
+        "wordCount": 54,
+        "sentences": 3,
+        "meanSentence": 18,
+        "ttr": 0.852,
+        "lengthBand": "Short",
+        "position": 0.111,
+        "wordLength": {
+          "2": 1,
+          "3": 3,
+          "4": 10,
+          "5": 7,
+          "6": 11,
+          "7": 7,
+          "8": 7,
+          "9": 4,
+          "10": 1,
+          "11": 1,
+          "14": 1,
+          "15": 1
+        },
+        "markerCounts": {
+          "coordination": 5,
+          "contrast": 1,
+          "epistemic": 1
+        }
+      },
+      {
+        "id": 5,
+        "wordCount": 79,
+        "sentences": 3,
+        "meanSentence": 26.333,
+        "ttr": 0.772,
+        "lengthBand": "Medium",
+        "position": 0.148,
+        "wordLength": {
+          "3": 9,
+          "4": 16,
+          "5": 10,
+          "6": 12,
+          "7": 9,
+          "8": 7,
+          "9": 11,
+          "10": 1,
+          "11": 2,
+          "12": 1,
+          "13": 1
+        },
+        "markerCounts": {
+          "cause": 3,
+          "coordination": 4,
+          "definition": 1
+        }
+      },
+      {
+        "id": 6,
+        "wordCount": 94,
+        "sentences": 5,
+        "meanSentence": 18.8,
+        "ttr": 0.83,
+        "lengthBand": "Long",
+        "position": 0.185,
+        "wordLength": {
+          "2": 1,
+          "3": 5,
+          "4": 17,
+          "5": 21,
+          "6": 13,
+          "7": 12,
+          "8": 6,
+          "9": 6,
+          "10": 6,
+          "11": 3,
+          "12": 1,
+          "13": 1,
+          "14": 2
+        },
+        "markerCounts": {
+          "coordination": 3,
+          "negation": 2,
+          "contrast": 1,
+          "definition": 1
+        }
+      },
+      {
+        "id": 7,
+        "wordCount": 57,
+        "sentences": 3,
+        "meanSentence": 19,
+        "ttr": 0.842,
+        "lengthBand": "Short",
+        "position": 0.222,
+        "wordLength": {
+          "2": 4,
+          "3": 3,
+          "4": 17,
+          "5": 9,
+          "6": 10,
+          "7": 4,
+          "8": 2,
+          "9": 4,
+          "10": 3,
+          "11": 1
+        },
+        "markerCounts": {
+          "coordination": 2,
+          "cause": 1
+        }
+      },
+      {
+        "id": 8,
+        "wordCount": 88,
+        "sentences": 7,
+        "meanSentence": 12.571,
+        "ttr": 0.83,
+        "lengthBand": "Long",
+        "position": 0.259,
+        "wordLength": {
+          "2": 1,
+          "3": 10,
+          "4": 21,
+          "5": 16,
+          "6": 11,
+          "7": 9,
+          "8": 5,
+          "9": 5,
+          "10": 5,
+          "11": 1,
+          "12": 2,
+          "13": 1,
+          "15": 1
+        },
+        "markerCounts": {
+          "coordination": 5,
+          "addition": 1,
+          "definition": 1
+        }
+      },
+      {
+        "id": 9,
+        "wordCount": 73,
+        "sentences": 5,
+        "meanSentence": 14.6,
+        "ttr": 0.877,
+        "lengthBand": "Medium",
+        "position": 0.296,
+        "wordLength": {
+          "2": 1,
+          "3": 3,
+          "4": 18,
+          "5": 14,
+          "6": 14,
+          "7": 4,
+          "8": 6,
+          "9": 4,
+          "10": 4,
+          "11": 2,
+          "12": 2,
+          "13": 1
+        },
+        "markerCounts": {
+          "definition": 1,
+          "coordination": 2,
+          "negation": 1
+        }
+      },
+      {
+        "id": 10,
+        "wordCount": 124,
+        "sentences": 6,
+        "meanSentence": 20.667,
+        "ttr": 0.863,
+        "lengthBand": "Long",
+        "position": 0.333,
+        "wordLength": {
+          "2": 7,
+          "3": 6,
+          "4": 22,
+          "5": 17,
+          "6": 19,
+          "7": 17,
+          "8": 11,
+          "9": 7,
+          "10": 8,
+          "11": 4,
+          "12": 2,
+          "13": 1,
+          "14": 1,
+          "15": 1,
+          "16": 1
+        },
+        "markerCounts": {
+          "coordination": 3,
+          "addition": 1,
+          "evidence": 1,
+          "definition": 1
+        }
+      },
+      {
+        "id": 11,
+        "wordCount": 110,
+        "sentences": 5,
+        "meanSentence": 22,
+        "ttr": 0.845,
+        "lengthBand": "Long",
+        "position": 0.37,
+        "wordLength": {
+          "1": 2,
+          "2": 1,
+          "3": 9,
+          "4": 22,
+          "5": 14,
+          "6": 19,
+          "7": 13,
+          "8": 10,
+          "9": 10,
+          "10": 3,
+          "11": 5,
+          "14": 1,
+          "15": 1
+        },
+        "markerCounts": {
+          "coordination": 4,
+          "negation": 1,
+          "definition": 2
+        }
+      },
+      {
+        "id": 12,
+        "wordCount": 67,
+        "sentences": 3,
+        "meanSentence": 22.333,
+        "ttr": 0.746,
+        "lengthBand": "Medium",
+        "position": 0.407,
+        "wordLength": {
+          "3": 2,
+          "4": 21,
+          "5": 5,
+          "6": 8,
+          "7": 15,
+          "8": 1,
+          "9": 5,
+          "10": 4,
+          "11": 5,
+          "12": 1
+        },
+        "markerCounts": {
+          "conditional": 4,
+          "definition": 1
+        }
+      },
+      {
+        "id": 13,
+        "wordCount": 100,
+        "sentences": 5,
+        "meanSentence": 20,
+        "ttr": 0.82,
+        "lengthBand": "Long",
+        "position": 0.444,
+        "wordLength": {
+          "3": 6,
+          "4": 21,
+          "5": 18,
+          "6": 12,
+          "7": 9,
+          "8": 9,
+          "9": 8,
+          "10": 10,
+          "11": 4,
+          "12": 1,
+          "13": 2
+        },
+        "markerCounts": {
+          "definition": 1,
+          "addition": 1,
+          "coordination": 1
+        }
+      },
+      {
+        "id": 14,
+        "wordCount": 87,
+        "sentences": 5,
+        "meanSentence": 17.4,
+        "ttr": 0.862,
+        "lengthBand": "Long",
+        "position": 0.481,
+        "wordLength": {
+          "3": 4,
+          "4": 13,
+          "5": 17,
+          "6": 10,
+          "7": 7,
+          "8": 17,
+          "9": 7,
+          "10": 7,
+          "11": 4,
+          "12": 1
+        },
+        "markerCounts": {
+          "definition": 1,
+          "negation": 2,
+          "coordination": 4
+        }
+      },
+      {
+        "id": 15,
+        "wordCount": 84,
+        "sentences": 5,
+        "meanSentence": 16.8,
+        "ttr": 0.857,
+        "lengthBand": "Medium",
+        "position": 0.519,
+        "wordLength": {
+          "2": 3,
+          "3": 4,
+          "4": 19,
+          "5": 14,
+          "6": 5,
+          "7": 12,
+          "8": 5,
+          "9": 8,
+          "10": 6,
+          "11": 4,
+          "12": 1,
+          "13": 2,
+          "14": 1
+        },
+        "markerCounts": {
+          "cause": 1,
+          "negation": 3,
+          "coordination": 2,
+          "addition": 1
+        }
+      },
+      {
+        "id": 16,
+        "wordCount": 49,
+        "sentences": 3,
+        "meanSentence": 16.333,
+        "ttr": 0.878,
+        "lengthBand": "Short",
+        "position": 0.556,
+        "wordLength": {
+          "3": 5,
+          "4": 8,
+          "5": 9,
+          "6": 2,
+          "7": 9,
+          "8": 5,
+          "9": 4,
+          "10": 1,
+          "11": 4,
+          "12": 1,
+          "15": 1
+        },
+        "markerCounts": {
+          "addition": 1,
+          "coordination": 2,
+          "evidence": 1
+        }
+      },
+      {
+        "id": 17,
+        "wordCount": 102,
+        "sentences": 5,
+        "meanSentence": 20.4,
+        "ttr": 0.775,
+        "lengthBand": "Long",
+        "position": 0.593,
+        "wordLength": {
+          "2": 1,
+          "3": 7,
+          "4": 17,
+          "5": 16,
+          "6": 16,
+          "7": 14,
+          "8": 9,
+          "9": 13,
+          "10": 6,
+          "11": 2,
+          "12": 1
+        },
+        "markerCounts": {
+          "coordination": 6,
+          "definition": 1,
+          "addition": 1
+        }
+      },
+      {
+        "id": 18,
+        "wordCount": 86,
+        "sentences": 7,
+        "meanSentence": 12.286,
+        "ttr": 0.651,
+        "lengthBand": "Medium",
+        "position": 0.63,
+        "wordLength": {
+          "3": 8,
+          "4": 13,
+          "5": 20,
+          "6": 12,
+          "7": 14,
+          "8": 3,
+          "9": 5,
+          "10": 2,
+          "11": 1,
+          "12": 5,
+          "14": 1,
+          "15": 1,
+          "17": 1
+        },
+        "markerCounts": {
+          "cause": 1,
+          "addition": 1,
+          "negation": 4,
+          "coordination": 3
+        }
+      },
+      {
+        "id": 19,
+        "wordCount": 48,
+        "sentences": 2,
+        "meanSentence": 24,
+        "ttr": 0.792,
+        "lengthBand": "Short",
+        "position": 0.667,
+        "wordLength": {
+          "3": 3,
+          "4": 5,
+          "5": 10,
+          "6": 5,
+          "7": 11,
+          "8": 3,
+          "9": 2,
+          "10": 1,
+          "11": 5,
+          "12": 2,
+          "15": 1
+        },
+        "markerCounts": {
+          "negation": 4,
+          "cause": 1,
+          "evidence": 1
+        }
+      },
+      {
+        "id": 20,
+        "wordCount": 76,
+        "sentences": 5,
+        "meanSentence": 15.2,
+        "ttr": 0.842,
+        "lengthBand": "Medium",
+        "position": 0.704,
+        "wordLength": {
+          "2": 3,
+          "3": 5,
+          "4": 15,
+          "5": 16,
+          "6": 6,
+          "7": 7,
+          "8": 8,
+          "9": 5,
+          "10": 3,
+          "11": 3,
+          "13": 1,
+          "15": 2,
+          "16": 2
+        },
+        "markerCounts": {
+          "cause": 1,
+          "definition": 1,
+          "coordination": 4,
+          "negation": 1
+        }
+      },
+      {
+        "id": 21,
+        "wordCount": 37,
+        "sentences": 2,
+        "meanSentence": 18.5,
+        "ttr": 0.892,
+        "lengthBand": "Short",
+        "position": 0.741,
+        "wordLength": {
+          "3": 1,
+          "4": 8,
+          "5": 9,
+          "6": 4,
+          "8": 5,
+          "9": 4,
+          "10": 4,
+          "11": 2
+        },
+        "markerCounts": {
+          "cause": 1,
+          "negation": 1,
+          "coordination": 1
+        }
+      },
+      {
+        "id": 22,
+        "wordCount": 119,
+        "sentences": 4,
+        "meanSentence": 29.75,
+        "ttr": 0.782,
+        "lengthBand": "Long",
+        "position": 0.778,
+        "wordLength": {
+          "2": 2,
+          "3": 4,
+          "4": 26,
+          "5": 25,
+          "6": 13,
+          "7": 12,
+          "8": 10,
+          "9": 5,
+          "10": 9,
+          "11": 7,
+          "12": 3,
+          "13": 1,
+          "14": 1,
+          "16": 1
+        },
+        "markerCounts": {
+          "addition": 1,
+          "negation": 5,
+          "coordination": 5,
+          "contrast": 1
+        }
+      },
+      {
+        "id": 23,
+        "wordCount": 69,
+        "sentences": 4,
+        "meanSentence": 17.25,
+        "ttr": 0.826,
+        "lengthBand": "Medium",
+        "position": 0.815,
+        "wordLength": {
+          "2": 1,
+          "3": 4,
+          "4": 13,
+          "5": 8,
+          "6": 11,
+          "7": 8,
+          "8": 8,
+          "9": 6,
+          "10": 2,
+          "11": 5,
+          "12": 2,
+          "15": 1
+        },
+        "markerCounts": {
+          "cause": 1,
+          "addition": 1,
+          "coordination": 4,
+          "negation": 1
+        }
+      },
+      {
+        "id": 24,
+        "wordCount": 86,
+        "sentences": 3,
+        "meanSentence": 28.667,
+        "ttr": 0.791,
+        "lengthBand": "Medium",
+        "position": 0.852,
+        "wordLength": {
+          "1": 2,
+          "2": 1,
+          "3": 2,
+          "4": 15,
+          "5": 11,
+          "6": 7,
+          "7": 15,
+          "8": 9,
+          "9": 7,
+          "10": 8,
+          "11": 6,
+          "12": 3
+        },
+        "markerCounts": {
+          "negation": 1,
+          "addition": 1,
+          "coordination": 1
+        }
+      },
+      {
+        "id": 25,
+        "wordCount": 49,
+        "sentences": 1,
+        "meanSentence": 49,
+        "ttr": 0.837,
+        "lengthBand": "Short",
+        "position": 0.889,
+        "wordLength": {
+          "3": 3,
+          "4": 11,
+          "5": 8,
+          "6": 6,
+          "7": 6,
+          "8": 4,
+          "9": 1,
+          "10": 4,
+          "11": 5,
+          "15": 1
+        },
+        "markerCounts": {
+          "coordination": 4
+        }
+      },
+      {
+        "id": 26,
+        "wordCount": 80,
+        "sentences": 3,
+        "meanSentence": 26.667,
+        "ttr": 0.875,
+        "lengthBand": "Medium",
+        "position": 0.926,
+        "wordLength": {
+          "2": 1,
+          "3": 6,
+          "4": 9,
+          "5": 17,
+          "6": 7,
+          "7": 12,
+          "8": 10,
+          "9": 6,
+          "10": 5,
+          "11": 5,
+          "12": 2
+        },
+        "markerCounts": {
+          "contrast": 1,
+          "epistemic": 1,
+          "negation": 4,
+          "coordination": 3,
+          "addition": 1
+        }
+      },
+      {
+        "id": 27,
+        "wordCount": 60,
+        "sentences": 3,
+        "meanSentence": 20,
+        "ttr": 0.883,
+        "lengthBand": "Medium",
+        "position": 0.963,
+        "wordLength": {
+          "2": 1,
+          "3": 3,
+          "4": 13,
+          "5": 8,
+          "6": 6,
+          "7": 14,
+          "8": 4,
+          "9": 4,
+          "10": 2,
+          "11": 4,
+          "12": 1
+        },
+        "markerCounts": {
+          "negation": 2,
+          "epistemic": 1,
+          "coordination": 1
+        }
+      },
+      {
+        "id": 28,
+        "wordCount": 94,
+        "sentences": 5,
+        "meanSentence": 18.8,
+        "ttr": 0.745,
+        "lengthBand": "Long",
+        "position": 1,
+        "wordLength": {
+          "2": 5,
+          "3": 4,
+          "4": 17,
+          "5": 17,
+          "6": 13,
+          "7": 16,
+          "8": 9,
+          "9": 6,
+          "10": 2,
+          "11": 3,
+          "12": 1,
+          "13": 1
+        },
+        "markerCounts": {
+          "cause": 1,
+          "negation": 1,
+          "coordination": 5,
+          "addition": 1
+        }
+      }
+    ],
+    "classifications": {
+      "genre": {
+        "label": "Undetermined",
+        "justification": "Genre requires cross-document or stronger contextual evidence.",
+        "evidence": "",
+        "paragraphs": [],
+        "status": "unverified",
+        "manual": false
+      },
+      "era": {
+        "label": "Unknown",
+        "justification": "Era cannot be dated reliably from surface lexicon.",
+        "evidence": "",
+        "paragraphs": [],
+        "status": "unverified",
+        "manual": false
+      },
+      "audience": {
+        "label": "Unknown",
+        "justification": "Intended readership is not identified by token statistics.",
+        "evidence": "",
+        "paragraphs": [],
+        "status": "unverified",
+        "manual": false
+      },
+      "framing": {
+        "label": "Comparative",
+        "justification": "Contrast markers recur across paragraphs; actual argumentative relations still require reading.",
+        "evidence": "Namun, sadar atau tidak, mayoritas kita masih terjebak dalam pola pikir yang sebenarnya sama: melihat politik melulu soal memprotes presiden, menuntut negara, atau menggugat kebijakan.",
+        "paragraphs": [
+          3,
+          4,
+          6,
+          22,
+          26
+        ],
+        "status": "context-supported",
+        "manual": false
+      },
+      "common": {
+        "label": "Authority / Citation",
+        "justification": "Recurring authority / citation cues; a topos hypothesis, not a proof of function.",
+        "evidence": "Makanya banyak dari kita antusias menunggu hasil akhir gugatan ijazah di MK, sembari heboh menganalisis komposisi Wantimpres, berdasarkan bahan-bahan yang diberikan oleh podcast-podcast politik.",
+        "paragraphs": [
+          10,
+          16,
+          19
+        ],
+        "status": "context-supported",
+        "manual": false
+      },
+      "temperament": {
+        "label": "Exploratory",
+        "justification": "Multiple qualified propositions; textual expression only, not personality.",
+        "evidence": "Ketika kita berdemonstrasi atau menuntut lembaga-lembaga tersebut, kita sebenarnya sedang menaruh harapan dan meminta agar sistem yang sama—mungkin hanya dengan wajah atau versi yang berbeda—untuk membereskan kerusakan yang justru mereka ciptakan sendiri.",
+        "paragraphs": [
+          4,
+          26,
+          27
+        ],
+        "status": "context-supported",
+        "manual": false
+      }
+    },
+    "overrides": {},
+    "language": "id",
+    "warnings": []
+  },
+  "prompt": "PRESET A — High-Fidelity Stylistic Reconstruction\n\nTASK DEFINITION\nParafrase teks T menggunakan rekonstruksi pola gaya terukur. Korpus referensi berfungsi sebagai petunjuk gaya, bukan sumber fakta atau sumber frasa yang harus disalin.\n\nTARGET STYLE SIGNATURE\n- Bahasa korpus (dipilih manual): id; deteksi heuristik: id. Sampel: 2065 token, 28 paragraf, 107 kalimat.\n- Bobot prioritas instruksional (bukan skor kesamaan): Leksikal 40%; Sintaksis 30%; Diskursus 30%.\n- Klasifikasi yang boleh dipertimbangkan:\n- framing: Comparative [didukung lintas paragraf; paragraf 3,4,6,22,26]\n- common: Authority / Citation [didukung lintas paragraf; paragraf 10,16,19]\n- temperament: Exploratory [didukung lintas paragraf; paragraf 4,26,27]\n\nMEASURED CHARACTERISTICS\n- Rata-rata kata/kalimat: 19.299, varians: 89.275.\n- Rata-rata panjang kata: 6.375 karakter; TTR: 0.432 (sensitif ukuran); MATTR-50: 0.865.\n- Panjang paragraf (quantile/manual): Short 9, Medium 10, Long 9; jangan perlakukan urutan paragraf sebagai waktu sejarah.\n- Marker yang terobservasi sedikitnya dua kali: coordination (79 kemunculan); negation (36 kemunculan); addition (13 kemunculan); definition (12 kemunculan); cause (11 kemunculan).\n- N-gram berulang lintas paragraf: antara pengetahuan dan (f=2, 2 paragraf); apa yang disebut (f=2, 2 paragraf); bagi orang biasa (f=2, 2 paragraf); bagi para elite (f=2, 2 paragraf); benar-benar menjadi politik (f=2, 2 paragraf); dari hukum besi (f=2, 2 paragraf); di antara mereka (f=2, 2 paragraf); ini bentuk permukaan, bukan bukti fungsi semantik.\n\nSUPPORTED RHETORICAL TENDENCIES\n- framing: Comparative; Contrast markers recur across paragraphs; actual argumentative relations still require reading.\n- common: Authority / Citation; Recurring authority / citation cues; a topos hypothesis, not a proof of function.\n- temperament: Exploratory; Multiple qualified propositions; textual expression only, not personality.\n\nTRANSFORMATION INSTRUCTIONS\nPrioritaskan panjang kalimat, tanda baca, penanda penghubung yang terobservasi berulang, serta variasi panjang paragraf. Jangan mengasumsikan register tanpa verifikasi manual.\n- Utamakan dimensi dalam urutan bobot: Leksikal > Sintaksis > Diskursus; bobot hanya mengatur penekanan, bukan klaim empiris.\n- Gunakan panjang dan variasi kalimat sebagai panduan fleksibel, bukan kuota absolut.\n- Hindari menyalin n-gram referensi panjang, identitas retoris yang tidak terverifikasi, atau pengulangan leksikal bertopik spesifik.\n- Sesuaikan bahasa dan terminologi dengan T bila korpus campuran.\n\nSEMANTIC INVARIANTS (WAJIB)\nPertahankan proposisi inti, relasi sebab-akibat/kontras/syarat, semua negasi, entitas bernama, angka, atribusi, tingkat kepastian, istilah teknis yang bermakna, dan posisi argumentatif sumber.\n\nNEGATIVE CONSTRAINTS\nJangan menambah fakta, referensi, kutipan, kausalitas, penilaian atau angka baru. Jangan mengubah sikap/tesis sumber. Jangan mereproduksi frasa panjang dari korpus referensi. Jangan berpura-pura telah menggunakan POS/dependency parser atau semantik model.\n\nUNCERTAIN PROPERTIES EXCLUDED FROM MANDATORY RULES\ngenre, era, audience\nKlasifikasi hasil pilihan manual adalah preferensi operator, bukan temuan korpus.\n\nINPUT TEXT T\n{{TEXT_TO_PARAPHRASE}}\n\nVALIDATION CHECKLIST\n[ ] Makna, negasi, relasi logis, posisi argumentatif, dan modalitas tetap.\n[ ] Nama, angka, atribusi, istilah teknis dan referensi tetap.\n[ ] Tidak ada fakta, klaim, sumber atau asumsi gaya baru.\n[ ] Gaya menggunakan fitur terukur tanpa imitasi literal.\n[ ] Perubahan struktur tidak meniadakan hubungan argumen.\n\nOUTPUT\nHasil parafrase saja, kecuali T memerlukan penanda ambiguitas agar invarian semantik tetap terjaga."
+}
