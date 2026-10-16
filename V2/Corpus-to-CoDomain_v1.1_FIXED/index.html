@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corpus → Co-Domain · Stylometric Workbench v1.1</title>
+<meta name="description" content="Local-first, evidence-aware stylometric analysis and paraphrase prompt generation for Indonesian and English corpora.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT6z8RW+S3xSLYE5/l0F5E" crossorigin="anonymous" onload="document.documentElement.classList.add('bootstrap-loaded')">
+<style>
+:root{--ink:#253948;--muted:#677c89;--line:#dfe7eb;--paper:#fafbfd;--accent:#356b79;--soft:#e7f0f2;--cream:#faf7f1;--warm:#9d7457}
+*{box-sizing:border-box}body{background:#f5f7f9;color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.57}
+h1,h2,h3{letter-spacing:-.025em}h1{font-weight:700}h2{font-size:1.4rem;font-weight:680}h3{font-size:1rem;font-weight:640}.text-muted{color:var(--muted)!important}
+.topbar{border-bottom:1px solid var(--line);background:#fff}.brand-chip{letter-spacing:.14em;font-size:10px;font-weight:760;color:#567987;text-transform:uppercase}.tagline{max-width:710px;color:#596e7c;font-size:15px}
+.side-nav{position:sticky;top:22px}.nav-anchor{display:block;border-radius:8px;padding:9px 12px;color:#607584;text-decoration:none;font-size:13px;margin:2px 0}.nav-anchor:hover{background:var(--soft);color:var(--ink)}
+.paper{background:#fff;border:1px solid var(--line);border-radius:12px;padding:21px;margin-bottom:18px;box-shadow:0 3px 18px rgba(34,57,67,.025)}.section-kicker{font-size:11px;color:#758997;font-weight:760;letter-spacing:.1em;text-transform:uppercase}.section-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:14px}
+.form-label{font-weight:620;font-size:12px;color:#4e6573}.form-control,.form-select{border-color:#cedce1;border-radius:8px;font-size:13px}.form-control:focus,.form-select:focus{box-shadow:0 0 0 3px #e5eff1;border-color:var(--accent)}textarea{resize:vertical}#corpus{min-height:244px;line-height:1.7}#targetText{min-height:106px}#promptText{min-height:465px;font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:12px;line-height:1.7;background:#fbfcfd}
+.btn-accent{background:#2e6270;border-color:#2e6270;color:#fff}.btn-accent:hover{background:#234e5a;color:#fff;border-color:#234e5a}.btn-outline-accent{border:1px solid #a1bac2;color:#315c68;background:#fff}.btn-outline-accent:hover{background:#eef5f7;color:#244652}
+.metric{background:#f8fafb;border-radius:9px;border:1px solid var(--line);padding:13px 14px;height:100%}.metric-label{font-size:11px;color:#738896}.metric-value{font-size:23px;letter-spacing:-.025em;font-weight:680;color:#2a4e5b;margin-top:2px}
+.table>:not(caption)>*>*{padding:8px 10px;border-color:#e8edf0}.table thead th{background:#f8fafb;color:#67808c;font-size:11px;letter-spacing:.015em;font-weight:700;white-space:nowrap}.table tbody td{font-size:12px;vertical-align:middle}.table-wrap{max-height:375px;overflow:auto;border:1px solid #e8ecef;border-radius:8px}.table-wrap .table{margin-bottom:0}.mono{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:12px}.linklike{background:none;border:0;padding:0;color:#2b687f;text-decoration:underline;text-decoration-color:#b9d1d9;text-underline-offset:3px;cursor:pointer}
+.note{font-size:12px;color:#647986}.panel-quiet{background:#f7fafb;border:1px solid #e7edef;padding:12px;border-radius:9px}.mini-pill{display:inline-flex;border-radius:6px;background:#eff4f6;border:1px solid #e1e9ee;margin:2px;padding:3px 9px;font-size:12px;color:#4c6473}
+.concordance{padding:11px 12px;border-bottom:1px solid var(--line)}.concordance:last-child{border-bottom:0}.kwic-text{overflow-wrap:anywhere;font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.8}.kwic-text mark{background:#e1eeec;color:#193e42;border-radius:3px;padding:2px 3px}
+#kwicContent{max-height:400px;overflow:auto;background:white;border:1px solid #e6ecef;border-radius:9px}#heatmap{display:flex;flex-wrap:wrap;gap:5px}.heat-cell{border:1px solid #d4e1e5;color:#294b58;border-radius:7px;background:color-mix(in srgb,#3b8195 calc(var(--heat)*75%),#f2f7f7);width:55px;height:57px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;font-size:10px}.heat-cell strong{font-size:16px}.svgchart svg{max-width:100%;width:100%;height:auto}.bartrack{height:9px;background:#edf2f5;border-radius:10px;overflow:hidden}.barfill{height:100%;background:#588a97;border-radius:10px}
+.profile-card{border:1px solid var(--line);padding:14px;border-radius:9px;background:#fff;height:100%}.evidence{font-size:10px;border:1px solid #e0e5e8;padding:2px 7px;border-radius:30px;color:#75818d;background:#f7f9fa;white-space:nowrap}.evidence.context{background:#edf4f2;color:#42736c;border-color:#ccded9}
+#graph svg{width:100%;height:auto;max-height:445px}#graph{background:radial-gradient(circle at center,#fff,#f7fafb);border:1px solid #e3ebee;border-radius:10px;overflow:hidden}#graph circle{cursor:pointer}#graph circle:focus{outline:3px solid #efc18b}
+summary{cursor:pointer;color:#385f6d;font-weight:600;padding:4px 0}details{border:1px solid var(--line);padding:12px 16px;border-radius:10px;margin-top:12px;background:#fbfcfd}details[open] summary{margin-bottom:12px}.form-check-label{font-size:12px}.muted-flag{font-size:11px;color:#8c6972;background:#fff7f6;padding:4px 8px;border-radius:5px}
+footer{color:#748693;font-size:12px;padding:12px 0 35px}
+@media(max-width:992px){.side-nav{position:static;display:flex;overflow-x:auto;white-space:nowrap;padding:4px 0}.nav-anchor{display:inline-block}.paper{padding:17px}.section-head{flex-wrap:wrap}}
+@media(max-width:560px){.metric-value{font-size:19px}.paper{padding:13px}h1{font-size:1.8rem}.topbar{padding:13px 0}}
+
+
+/* Offline CSS fallback. Only active when the Bootstrap CDN stylesheet did not load. */
+html:not(.bootstrap-loaded) .container-fluid{width:100%;padding-right:2.2rem;padding-left:2.2rem;margin:auto}
+html:not(.bootstrap-loaded) .row{display:flex;flex-wrap:wrap;margin:0 -.375rem}
+html:not(.bootstrap-loaded) .row > [class*="col-"],html:not(.bootstrap-loaded) .row > .col{padding:0 .375rem;flex:0 0 auto;min-width:0;width:100%}
+html:not(.bootstrap-loaded) .row > .col-6{width:50%}
+html:not(.bootstrap-loaded) .btn{display:inline-block;border-radius:7px;border:1px solid #cad9dd;padding:.43rem .7rem;font-size:13px;cursor:pointer;text-align:center;background:#f5f8f9;color:#264b5c}
+html:not(.bootstrap-loaded) .btn-accent{background:#2e6270;color:#fff;border-color:#2e6270}
+html:not(.bootstrap-loaded) .btn-outline-accent,html:not(.bootstrap-loaded) .btn-outline-secondary{background:white;color:#315c68}
+html:not(.bootstrap-loaded) .btn-sm{padding:.38rem .62rem}
+html:not(.bootstrap-loaded) .form-control,html:not(.bootstrap-loaded) .form-select{display:block;width:100%;padding:7px 11px;background:#fff;color:#233d4b;border:1px solid #cedce1}
+html:not(.bootstrap-loaded) .form-control:focus,html:not(.bootstrap-loaded) .form-select:focus{outline:2px solid #9ec1ce}
+html:not(.bootstrap-loaded) .form-range{width:100%}
+html:not(.bootstrap-loaded) .d-flex{display:flex!important}
+html:not(.bootstrap-loaded) .flex-wrap{flex-wrap:wrap!important}
+html:not(.bootstrap-loaded) .flex-grow-1{flex-grow:1!important}
+html:not(.bootstrap-loaded) .justify-content-between{justify-content:space-between!important}
+html:not(.bootstrap-loaded) .justify-content-center{justify-content:center!important}
+html:not(.bootstrap-loaded) .align-items-center{align-items:center!important}
+html:not(.bootstrap-loaded) .align-items-end{align-items:flex-end!important}
+html:not(.bootstrap-loaded) .gap-2{gap:.5rem!important}
+html:not(.bootstrap-loaded) .gap-3{gap:1rem!important}
+html:not(.bootstrap-loaded) .gap-4{gap:1.5rem!important}
+html:not(.bootstrap-loaded) .mb-0{margin-bottom:0!important}
+html:not(.bootstrap-loaded) .mb-1{margin-bottom:.25rem!important}
+html:not(.bootstrap-loaded) .mb-2{margin-bottom:.5rem!important}
+html:not(.bootstrap-loaded) .mb-3{margin-bottom:1rem!important}
+html:not(.bootstrap-loaded) .mb-4{margin-bottom:1.5rem!important}
+html:not(.bootstrap-loaded) .mt-1{margin-top:.25rem!important}
+html:not(.bootstrap-loaded) .mt-2{margin-top:.5rem!important}
+html:not(.bootstrap-loaded) .mt-3{margin-top:1rem!important}
+html:not(.bootstrap-loaded) .mt-4{margin-top:1.5rem!important}
+html:not(.bootstrap-loaded) .py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}
+html:not(.bootstrap-loaded) .py-4{padding-top:1.5rem!important;padding-bottom:1.5rem!important}
+html:not(.bootstrap-loaded) .pt-4{padding-top:1.5rem!important}
+html:not(.bootstrap-loaded) .pb-4{padding-bottom:1.5rem!important}
+html:not(.bootstrap-loaded) .text-center{text-align:center!important}
+html:not(.bootstrap-loaded) .text-start{text-align:left!important}
+html:not(.bootstrap-loaded) .fw-bold{font-weight:700!important}
+html:not(.bootstrap-loaded) .table{border-collapse:collapse;width:100%}
+html:not(.bootstrap-loaded) .table th,html:not(.bootstrap-loaded) .table td{border-bottom:1px solid #e2e8eb;text-align:left;padding:8px 10px}
+html:not(.bootstrap-loaded) .alert-warning{background:#fff8e8;color:#755b30;border-radius:7px}
+html:not(.bootstrap-loaded) .text-success{color:#37745d!important}
+html:not(.bootstrap-loaded) .text-danger{color:#a54c4c!important}
+html:not(.bootstrap-loaded) .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important}
+@media (min-width:768px){html:not(.bootstrap-loaded) .row > .col-md-4{width:33.3333%}html:not(.bootstrap-loaded) .row > .col-md-5{width:41.6667%}html:not(.bootstrap-loaded) .row > .col-md-6{width:50%}html:not(.bootstrap-loaded) .row > .col-md-7{width:58.3333%}}
+@media (min-width:992px){html:not(.bootstrap-loaded) .row > .col-lg-2{width:16.6667%}html:not(.bootstrap-loaded) .row > .col-lg-3{width:25%}html:not(.bootstrap-loaded) .row > .col-lg-4{width:33.3333%}html:not(.bootstrap-loaded) .row > .col-lg-5{width:41.6667%}html:not(.bootstrap-loaded) .row > .col-lg-7{width:58.3333%}html:not(.bootstrap-loaded) .row > .col-lg-10{width:83.3333%}}
+@media (min-width:1200px){html:not(.bootstrap-loaded) .row > .col-xl-3{width:25%}html:not(.bootstrap-loaded) .row > .col-xl-4{width:33.3333%}html:not(.bootstrap-loaded) .row > .col-xl-6{width:50%}html:not(.bootstrap-loaded) .row > .col-xl-8{width:66.6667%}html:not(.bootstrap-loaded) .row-cols-xl-2 > .col{width:50%}}
+@media (min-width:1400px){html:not(.bootstrap-loaded) .row > .col-xxl-6{width:50%}}
+@media (max-width:575px){html:not(.bootstrap-loaded) .container-fluid{padding:0 12px}}
+
+</style>
+</head>
+<body>
+<header class="topbar py-4"><div class="container-fluid px-3 px-xl-5"><div class="d-flex align-items-center justify-content-between flex-wrap gap-3"><div><div class="brand-chip mb-1">Research instrument / local-first</div><h1 class="h3 mb-1">Corpus <span style="color:#719ca8">→</span> Co-Domain</h1><div class="tagline">Topological stylometry, corpus evidence &amp; prompt preset synthesis — tanpa klaim semantik yang tidak teruji.</div></div><span class="small text-muted">v1.1 · Local-first · ID / EN · No API</span></div></div></header>
+<div class="container-fluid px-3 px-xl-5 pt-4"><div class="row g-4"><aside class="col-lg-2"><nav class="side-nav" aria-label="Navigasi analisis"><a class="nav-anchor" href="#input">01 · Corpus</a><a class="nav-anchor" href="#settings">02 · Configuration</a><a class="nav-anchor" href="#stats">03 · Statistics</a><a class="nav-anchor" href="#topology">04 · Topology</a><a class="nav-anchor" href="#profile">05 · Style profile</a><a class="nav-anchor" href="#codomain">06 · Co-domain</a><a class="nav-anchor" href="#methods">07 · Methods &amp; QA</a></nav></aside>
+<main class="col-lg-10 col-12">
+<section class="paper" id="input"><div class="section-head"><div><div class="section-kicker">01 / Observation domain</div><h2>Style Reference Corpus</h2><p class="note mb-0">Masukkan teks asli untuk mengekstrak pola; bukan teks yang harus diparafrase.</p></div><div><button class="btn btn-sm btn-outline-accent" id="sample" type="button">Load sample</button></div></div>
+<label class="form-label" for="corpus">Reference corpus</label><textarea id="corpus" class="form-control" spellcheck="false" placeholder="Tempel esai, artikel, beberapa paragraf, atau unggah file .txt / .md..."></textarea>
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mt-3"><div class="d-flex gap-4 flex-wrap"><div class="small text-muted"><strong id="liveWords">0</strong> words</div><div class="small text-muted"><strong id="liveParas">0</strong> paragraphs</div><div class="small text-muted"><strong id="liveChars">0</strong> chars</div></div><div class="d-flex gap-2 flex-wrap"><label class="btn btn-sm btn-outline-secondary" for="fileInput">Upload .txt / .md</label><input id="fileInput" type="file" accept=".txt,.md,text/plain,text/markdown" hidden><button type="button" id="clear" class="btn btn-sm btn-outline-secondary">Clear</button><button type="button" id="analyze" class="btn btn-sm btn-accent">Analyze corpus</button></div></div><div id="status" class="small text-secondary mt-2" role="status" aria-live="polite">Siap menerima korpus.</div>
+</section>
+<section class="paper" id="settings"><div class="section-head"><div><div class="section-kicker">02 / Measurement parameters</div><h2>Preprocessing Configuration</h2><p class="note mb-0">Setiap perubahan konfigurasi dipakai pada analisis berikutnya dan dijalankan ulang jika korpus sudah tersedia.</p></div><span class="mini-pill" id="thresholdNotice">q25 / q75 · bigram</span></div>
+<div class="row g-3"><div class="col-6 col-xl-3"><label class="form-label" for="language">Language preference</label><select id="language" class="form-select" data-config="core"><option value="auto">Auto heuristik</option><option value="id">Bahasa Indonesia</option><option value="en">English</option><option value="mixed">Mixed / bilingual</option></select></div>
+<div class="col-6 col-xl-3"><label class="form-label" for="mode">Corpus filtering mode</label><select id="mode" class="form-select" data-config="core"><option value="compare">Comparative (default)</option><option value="raw">Raw</option><option value="filtered">Filtered</option></select></div>
+<div class="col-6 col-xl-3"><label class="form-label" for="nsize">Frequency band basis</label><select id="nsize" class="form-select" data-config="core"><option value="2">Bigram (n=2)</option><option value="3">Trigram (n=3)</option></select></div>
+<div class="col-6 col-xl-3"><label class="form-label" for="stopList">Stopword collection</label><select id="stopList" class="form-select" data-config="core"><option value="both">Indonesian + English</option><option value="id">Indonesian</option><option value="en">English</option><option value="none">None</option></select></div></div>
+<details><summary>Advanced preprocessing, quantiles &amp; weights</summary>
+<div class="row g-3"><div class="col-lg-4"><label class="form-label" for="customStop">Custom stopwords / stop-phrases</label><textarea id="customStop" rows="3" class="form-control" placeholder="Satu item per baris atau pisahkan dengan koma"></textarea><div class="note mt-1">Frasa dicocokkan dalam satu kalimat. Filtering tidak memodifikasi teks asli.</div></div>
+<div class="col-lg-4"><label class="form-label" for="normalization">Unicode normalization</label><select id="normalization" class="form-select mb-2" data-config="core"><option value="nfkc">NFKC</option><option value="nfc">NFC</option></select><label class="form-label" for="punct">Punctuation handling</label><select id="punct" class="form-select" data-config="core"><option value="separate">Separate punctuation bigrams</option><option value="ignore">Hide punctuation bigrams</option></select><div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="casefold" data-config="core" checked><label for="casefold" class="form-check-label">Lowercase for comparison only</label></div><div class="form-check"><input class="form-check-input" type="checkbox" id="protect" data-config="core" checked><label for="protect" class="form-check-label">Preserve discourse markers &amp; negation</label></div></div>
+<div class="col-lg-4"><div class="row g-2"><div class="col-6"><label class="form-label" for="qLow">Lower quantile (%)</label><input id="qLow" class="form-control" type="number" min="0" max="49" value="25" data-config="core"></div><div class="col-6"><label class="form-label" for="qHigh">Upper quantile (%)</label><input id="qHigh" class="form-control" type="number" min="50" max="100" value="75" data-config="core"></div><div class="col-12"><label class="form-label" for="paraBins">Paragraph-length bins</label><select id="paraBins" class="form-select" data-config="core"><option value="quantile">Quantile (default)</option><option value="manual">Manual thresholds</option></select></div><div id="manualBins" hidden class="col-12"><div class="row g-2"><div class="col-6"><label class="form-label" for="shortMax">Short max words</label><input type="number" min="0" id="shortMax" value="35" class="form-control" data-config="core"></div><div class="col-6"><label class="form-label" for="mediumMax">Medium max words</label><input type="number" min="0" id="mediumMax" value="100" class="form-control" data-config="core"></div></div></div></div></div>
+</div><hr><p class="form-label mb-2">Instructional emphasis — bukan skor kesamaan gaya</p><div class="row g-3"><div class="col-md-4"><div class="d-flex justify-content-between"><label for="weightLex" class="form-label">Lexical</label><b id="lexValue">40%</b></div><input type="range" min="0" max="100" id="weightLex" value="40" data-config="weight" class="form-range"></div><div class="col-md-4"><div class="d-flex justify-content-between"><label for="weightSyn" class="form-label">Syntactic</label><b id="synValue">30%</b></div><input type="range" min="0" max="100" id="weightSyn" value="30" data-config="weight" class="form-range"></div><div class="col-md-4"><div class="d-flex justify-content-between"><label for="weightDisc" class="form-label">Discourse</label><b id="discValue">30%</b></div><input type="range" min="0" max="100" id="weightDisc" value="30" data-config="weight" class="form-range"></div></div></details>
+</section>
+<div id="empty" class="paper text-center py-5"><div class="section-kicker mb-2">Awaiting corpus</div><h2 class="h5">Analysis appears here</h2><div class="text-muted">Gunakan “Load sample” untuk menjelajahi contoh, atau masukkan korpus asli.</div></div>
+<div id="results" hidden>
+<section class="paper" id="stats"><div class="section-head"><div><div class="section-kicker">03 / Direct observation</div><h2>Statistical Analysis</h2><p class="note mb-0">Deskripsi statistik tidak setara dengan inferensi semantik. TTR sensitif terhadap panjang korpus; MATTR memakai jendela 50 kata.</p></div></div>
+<div id="diagnostics" class="mb-3"></div><div id="metricCards" class="row g-2 mb-4"></div>
+<div class="panel-quiet mb-3 note" id="filterCaption"></div>
+<div id="compareBox" class="mb-4"><h3>Raw vs. filtered ablation</h3><div class="table-wrap"><table class="table table-sm"><thead><tr><th>N-gram</th><th>Raw f</th><th>Filtered f</th><th>Δ filtered–raw</th></tr></thead><tbody id="compareTable"></tbody></table></div></div>
+<div class="row g-3"><div class="col-12 col-xxl-6"><h3>Bigram frequency</h3><div class="table-wrap"><table class="table table-sm"><thead><tr><th>Pattern / inspect</th><th>f</th><th>/100</th><th>DF</th><th>Disp.</th><th>TF-IDF</th><th>Fano</th></tr></thead><tbody id="bigramTable"></tbody></table></div></div><div class="col-12 col-xxl-6"><h3>Trigram frequency</h3><div class="table-wrap"><table class="table table-sm"><thead><tr><th>Pattern / inspect</th><th>f</th><th>/100</th><th>DF</th><th>Disp.</th><th>TF-IDF</th><th>Fano</th></tr></thead><tbody id="trigramTable"></tbody></table></div></div></div>
+<div id="puncBox" class="mt-3"><h3>Punctuation-aware bigrams (separate stream)</h3><div class="table-wrap" style="max-height:210px"><table class="table table-sm"><thead><tr><th>Pair</th><th>f</th><th>Paragraph DF</th></tr></thead><tbody id="punctTable"></tbody></table></div></div>
+<hr class="my-4"><h3>Frequency bands</h3><p id="bandCaption" class="note"></p><div class="table-wrap"><table class="table table-sm"><thead><tr><th>Band</th><th>Types</th><th>Occurrences</th><th>Actual threshold</th><th>Examples (descriptive only)</th></tr></thead><tbody id="bandTable"></tbody></table></div>
+<hr class="my-4"><div id="kwic"><div class="section-head mb-2"><div><h3>KWIC · Contextual concordance</h3><div class="note">Klik n-gram pada tabel atau pilih daftar untuk memeriksa asalnya.</div></div><div style="min-width:230px;max-width:440px;flex:1"><label for="ngramSelect" class="visually-hidden">Choose n-gram</label><select class="form-select form-select-sm" id="ngramSelect"></select></div></div><p id="ngramInfo" class="note mb-2"></p><div id="kwicContent"></div></div>
+<hr class="my-4"><h3>Surface rhetoric markers (rule-based)</h3><p class="note">Kelas marker dibangun dengan pencocokan frasa, bukan POS tagging, dependency parsing, atau analisis fungsi semantik otomatis.</p><div class="table-wrap"><table class="table table-sm"><thead><tr><th>Category</th><th>Occurrences</th><th>Paragraph DF</th><th>Evidence snippet</th></tr></thead><tbody id="markerTable"></tbody></table></div><div class="mt-3"><div class="form-label">Punctuation distribution</div><div id="punctCounts"></div><p id="passiveInfo" class="note mb-0 mt-2"></p></div>
+</section>
+<section class="paper" id="topology"><div class="section-head"><div><div class="section-kicker">04 / Relational textual sequence</div><h2>Topological Explorer</h2><p class="note mb-0">Weighted directed graph, distribusi paragraf, dan transisi. “Topology” di sini berarti relasi graf, bukan topologi kontinuitas matematis.</p></div></div>
+<h3>Paragraph-level measurement</h3><p id="paraLengthInfo" class="note"></p><div class="table-wrap mb-4" style="max-height:300px"><table class="table table-sm"><thead><tr><th>Paragraph</th><th>Words</th><th>Sentences</th><th>Mean sent.</th><th>TTR</th><th>Length band</th><th>Relative pos.</th></tr></thead><tbody id="paraTable"></tbody></table></div>
+<div class="row g-4"><div class="col-lg-5"><h3>Word-length distribution</h3><div id="wordLengthBar"></div></div><div class="col-lg-7"><h3>Paragraph-position heatmap · selected n-gram</h3><p class="note">Angka = frekuensi per paragraf; intensitas dibandingkan maksimum dalam korpus. Klik sel untuk membaca paragraf.</p><div id="heatmap"></div><p id="paragraphDetail" class="note mt-2"></p></div></div>
+<hr class="my-4"><h3>Frequency evolution along text</h3><p class="note">Kepadatan kemunculan n-gram terpilih / 100 kata per paragraf; ini posisi teks, bukan waktu historis penulis.</p><div id="positionalChart" class="svgchart"></div><div id="selectedOccurrences" class="note mono"></div>
+<hr class="my-4"><div class="d-flex gap-3 flex-wrap justify-content-between"><div><h3>Multilayer weighted graph</h3><p id="graphCaption" class="note mb-2"></p></div><div class="d-flex align-items-center gap-3 flex-wrap"><div><label for="layer" class="form-label">Graph layer</label><select id="layer" class="form-select form-select-sm"><option value="lexical">1 · Lexical adjacency</option><option value="syntax">2 · Syntactic marker proxy</option><option value="discourse">3 · Discourse sequence</option></select></div><div><label for="minEdge" class="form-label">Min edge count <span id="minEdgeLabel">1</span></label><input id="minEdge" type="range" min="1" max="7" value="1" class="form-range"></div></div></div>
+<div class="row g-3"><div class="col-xl-8"><div id="graph"></div><div id="nodeInfo" class="panel-quiet note mt-2" role="status">Klik node atau edge untuk inspect relasi.</div></div><div class="col-xl-4"><div class="note mb-2" id="graphMetrics"></div><div class="table-wrap" style="max-height:410px"><table class="table table-sm"><thead><tr><th>Node</th><th>In</th><th>Out</th><th>Weighted</th><th>Centrality</th></tr></thead><tbody id="nodeTable"></tbody></table></div></div></div><p class="note mt-2">Graf menampilkan subset maksimal 24–30 node untuk keterbacaan. Connected components dihitung sebagai weak components pada edge yang lolos filter. Community detection dan inferensi kemiripan makna tidak diimplementasikan.</p>
+</section>
+<section class="paper" id="profile"><div class="section-head"><div><div class="section-kicker">05 / Constrained inference</div><h2>Writing Style Profile</h2><p class="note mb-0">Klasifikasi berbasis heuristik ditandai tingkat evidensinya. Override pengguna mengatur preset, tetapi tidak mengubah data asli.</p></div></div><div class="row row-cols-1 row-cols-xl-2 g-3" id="profileGrid"></div><div class="note mt-3">“Context-supported” = beberapa marker ditemukan lintas paragraf, belum merupakan verifikasi fungsi retorika oleh manusia. Label “rule-based” ≠ diagnosis genre atau maksud penulis. Kategori di luar dukungan yang memadai tetap Undetermined.</div></section>
+<section class="paper" id="codomain"><div class="section-head"><div><div class="section-kicker">06 / Operational prompt artifact</div><h2>Co-domain Preset Generator</h2><div class="note">Output berupa instruksi bagi model bahasa eksternal. Aplikasi ini <strong>tidak mengeksekusi parafrase semantik</strong> dan tidak mengunggah teks.</div></div>
+<div class="row g-3 mb-3"><div class="col-md-5"><label for="preset" class="form-label">Select preset</label><select id="preset" class="form-select"><option value="A">A — High-Fidelity Stylistic Reconstruction</option><option value="B">B — Rhetorical Structure Transfer</option><option value="C">C — Lexical &amp; Syntactic Adaptation</option><option value="D">D — Balanced Semantic Paraphrase</option></select></div><div class="col-md-7"><label for="targetText" class="form-label">Text to Paraphrase (T) — optional, separate input</label><textarea id="targetText" class="form-control" placeholder="Teks yang akan diparafrase melalui model eksternal; tidak dianalisis sebagai bagian korpus referensi."></textarea></div></div>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2"><label class="form-label" for="promptText">Editable full prompt preview</label><div class="d-flex gap-2 flex-wrap"><button class="btn btn-sm btn-outline-secondary" id="resetPreset" type="button">Reset preset</button><button class="btn btn-sm btn-outline-accent" id="export" type="button">Export JSON</button><button class="btn btn-sm btn-outline-accent" id="copy" type="button">Copy prompt only</button><button class="btn btn-sm btn-accent" id="copyBundle" type="button">Copy Prompt + JSON</button></div></div><textarea id="promptText" class="form-control" spellcheck="false" aria-label="Editable generated preset"></textarea><div id="promptStats" class="note mt-2" aria-live="polite"></div><div id="bundleInfo" class="note mt-1">Unified clipboard berisi satu objek JSON valid: field <code>prompt</code> menyimpan teks prompt persis seperti di editor, bersama <code>style_signature</code>, parameter dan provenance. Teks korpus lengkap tidak disertakan.</div><div id="bundleFallbackBox" class="mt-2" hidden><label for="bundleFallback" class="form-label">Browser memblokir clipboard. Salin JSON berikut secara manual:</label><textarea id="bundleFallback" class="form-control" spellcheck="false" rows="8" readonly></textarea></div>
+</section>
+</div>
+<section class="paper" id="methods"><div class="section-head"><div><div class="section-kicker">07 / Falsifiability and limitations</div><h2>Measurement Notes &amp; Self-Tests</h2></div><button id="tests" type="button" class="btn btn-sm btn-outline-accent">Run A–I assertions</button></div>
+<details><summary>Operational metric definitions</summary><div class="small">
+<p><b>Tokens:</b> Unicode word/number match; punctuation retained in a parallel sequence. N-grams never cross sentence or paragraph boundaries. Each hit retains original start/end offsets. Relative position of word i = i/(N−1) for N&gt;1; paragraph position=(p−1)/(P−1).</p>
+<p><b>f</b>=raw hit count; <b>relative /100</b>=100f/available word tokens in active mode; <b>DF</b>=number of paragraphs with at least one hit; <b>dispersion</b>=DF/P. <b>TF-IDF</b>=mean across all paragraphs of (count/paragraph word count)×[1+ln((1+P)/(1+DF))]; <b>burstiness</b>=population variance of paragraph hit counts / mean (Fano factor, P≥2), not chronological burstiness.</p>
+<p><b>Association</b>=generalized independence log₂[(f/number of n-gram windows)/product(unigram frequencies/word count)], reported only when f≥2; not a semantic strength metric. <b>Context diversity</b>=number of distinct left/right word-neighbor pairs tagged by side divided by 2f. <b>MATTR-50</b>=mean TTR across overlapping 50-word windows. <b>Lexical repetition</b>=1−TTR.</p>
+<p><b>Quantiles:</b> sort by n-gram TYPE frequency ascending, nearest-lower rank floor[q(N−1)]. Place all tied values in the lowest eligible band: f≤qLow → Lower; else f≤qHigh → Median; else Upper. Empty bands are valid. Paragraph word-length bins use the same floor rank at 33% and 67%, or manual inclusive word-count cutoffs.</p>
+<p><b>Networks:</b> directed edges follow token order, marker→sentence occurrence, or paragraph adjacency. Edge weight=hit count (lexical/marker) or 1 (paragraph successor); discourse edges include Jaccard lexical overlap as a separate annotation. Weak connected components use the thresholded graph. Centrality shown is normalized weighted degree (endpoint strength / sum of endpoint strengths), not eigenvector or betweenness centrality.</p>
+<p><b>Interpretation:</b> surface marker matching can signal contrast/cause/negation; it cannot establish actual argument meaning, historical era, writer identity, personality, or similarity of propositions. Lexical code-switching detection is stopword-based, not trained language ID. Stop phrases are only exact contiguous word sequences. TTR comparison across unequal corpora is invalid without length control.</p></div></details>
+<details><summary>Capability disclosure</summary><div class="row g-3 small"><div class="col-md-6"><b>Implemented</b><p class="note">Local preprocessing, original offsets, stopword ablation, bigram/trigram, KWIC, paragraph-level dispersion, TF-IDF, Fano, positional heatmap, lexical/syntax-proxy/discourse graphs, manual style overrides, four editable prompts, JSON export, clipboard fallback.</p></div><div class="col-md-6"><b>Heuristically approximated</b><p class="note">Sentence splitting (abbreviations), ID/EN detection, category/connective markers, passive candidates, textual framing and topoi, simplified association/centrality. No estimates of classification accuracy are provided.</p></div><div class="col-md-6"><b>Requires external NLP resources</b><p class="note">Verified POS tagging, dependency depth, entity recognition, reliable rhetorical/discourse parsing, semantics-preserving paraphrase execution and style attribution calibration.</p></div><div class="col-md-6"><b>Not implemented</b><p class="note">Language model calls, semantic similarity scores, automatic fact checking, graph communities, diachronic authorship inference, server storage or real-time collaboration.</p></div></div></details>
+<div class="panel-quiet mt-3"><div class="small text-muted">Actual browser-run assertions appear below after pressing the test button; the core tests do not certify visual appearance or OS clipboard permissions.</div><div id="testSummary" class="small fw-bold mt-2">Not executed in this browser session.</div><div class="table-wrap mt-2"><table class="table table-sm"><thead><tr><th>Fixture</th><th>Result</th><th>Criterion</th></tr></thead><tbody id="testResults"><tr><td colspan="3">Click “Run A–I assertions” to execute tests locally.</td></tr></tbody></table></div></div></section>
+<footer>Corpus → Co-Domain · Experimental research workbench. Local processing; external CDN is used for Bootstrap styling only. Copyright claims, semantic validity and research conclusions require independent review.</footer>
+</main></div></div>
+<script>
+/* Corpus-to-Co-Domain — deterministic engine; no network or data persistence. */
+(function(root){
+'use strict';
+const STOP={id:'yang dan di ke dari pada untuk dengan ini itu adalah sebagai akan telah sudah juga agar oleh dalam atau serta maka yaitu yakni saja suatu para lebih karena ketika jika saat bahwa kepada tentang dapat bisa masih sehingga namun tetapi meskipun meski bukan tidak',en:'the a an and or of to in on at by for with from is are was were be been being this that these those as it its they their he she we you i have has had do does did will would can could should may might into about than then but so while when if because although however therefore not no never',protected:'tidak bukan namun tetapi karena meskipun sehingga sebab jika walaupun padahal sedangkan agar bahwa apabila karena itu akan harus mungkin dapat bisa nevertheless however because although therefore unless while whereas not never no should must may might can could if but yet despite thus hence'};
+const SPLIT=s=>new Set(s.split(/\s+/u).filter(Boolean));
+const STOP_ID=SPLIT(STOP.id), STOP_EN=SPLIT(STOP.en), PROTECTED=SPLIT(STOP.protected);
+const MARKERS={contrast:['namun','tetapi','sedangkan','meskipun','walaupun','padahal','sebaliknya','however','although','whereas','nevertheless','but','yet','instead','on the other hand'],cause:['karena','sebab','akibatnya','sehingga','oleh karena itu','because','therefore','thus','hence','as a result'],addition:['selain itu','lebih lanjut','di samping itu','juga','serta','furthermore','moreover','additionally','also','in addition'],conditional:['jika','apabila','seandainya','if','unless','provided that'],epistemic:['mungkin','barangkali','tampaknya','agaknya','kemungkinan','perhaps','possibly','might','may','apparently','arguably'],negation:['tidak','bukan','belum','tanpa','never','not','no','without'],example:['misalnya','contohnya','sebagai contoh','for example','for instance','such as'],definition:['adalah','yaitu','yakni','didefinisikan sebagai','is defined as','refers to'],evidence:['menurut','berdasarkan','data menunjukkan','penelitian menunjukkan','according to','research shows','evidence suggests'],coordination:['dan','atau','serta','and','or']};
+const ABBR=SPLIT('dr mr mrs ms prof ir sdr no dll dsb dkk etc eg ie vs st jr sr');
+const DEFAULTS={language:'auto',mode:'compare',stopList:'both',custom:'',protect:true,punctuation:'separate',ngram:2,qLow:25,qHigh:75,normalization:'nfkc',caseFold:true,weights:[40,30,30],paragraphBins:'quantile',shortMax:35,mediumMax:100,edgeMin:1};
+const fix=(x,n=3)=>Number.isFinite(x)?+x.toFixed(n):null;
+function quantile(a,q){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y);const idx=Math.max(0,Math.min(s.length-1,Math.floor((q/100)*(s.length-1))));return s[idx];}
+function norm(s,opts){let x=opts.normalization==='nfkc'?s.normalize('NFKC'):s.normalize('NFC');return opts.caseFold!==false?x.toLocaleLowerCase():x;}
+function isWord(t){return t.category==='word'||t.category==='number';}
+function paragraphsFrom(original){let regions=[],start=0;const re=/(?:\r?\n[\t ]*){2,}/g;let match;while((match=re.exec(original))){regions.push([start,match.index]);start=match.index+match[0].length;}regions.push([start,original.length]);return regions.map(([a,b])=>{const x=original.slice(a,b),left=(x.match(/^\s*/u)||[''])[0].length,right=(x.match(/\s*$/u)||[''])[0].length;return {start:a+left,end:b-right,text:original.slice(a+left,b-right)};}).filter(p=>p.text.length>0).map((p,i)=>({...p,id:i+1}));}
+function languageOfWords(words){let id=0,en=0;for(const w of words){if(STOP_ID.has(w))id++;if(STOP_EN.has(w))en++;}return id&&en?'mixed':id?'id':en?'en':'undetermined';}
+function preprocess(text,options={}){
+ const opts={...DEFAULTS,...options}, original=String(text||''),paras=paragraphsFrom(original),tokens=[],sentences=[],wordList=[];
+ let globalSent=0;
+ const regex=/\p{N}+(?:[.,]\p{N}+)+(?:%)?|[\p{L}\p{N}]+(?:[’'\-][\p{L}\p{N}]+)*|[^\s]/gu;
+ for(const p of paras){const parts=[...p.text.matchAll(regex)];let sent=[],local=0,wordPos=0,seen=0;
+  function closeSentence(){if(!sent.length)return;const words=sent.filter(isWord);if(words.length){sentences.push({id:globalSent+1,paragraph:p.id,index:local+1,start:sent[0].start,end:sent[sent.length-1].end,text:original.slice(sent[0].start,sent[sent.length-1].end),wordCount:words.length,language:languageOfWords(words.map(x=>x.normalized))});globalSent++;local++;}sent=[];}
+  for(let i=0;i<parts.length;i++){
+   const m=parts[i],raw=m[0],start=p.start+m.index,category=/^[\p{L}\p{N}]/u.test(raw)?(/^[\p{N}]/u.test(raw)?'number':'word'):'punctuation';
+   const t={raw,normalized:norm(raw,opts),start,end:start+raw.length,paragraph:p.id,sentence:globalSent+1,paragraphTokenIndex:seen++,wordPosition:category==='punctuation'?null:wordPos++,relative:0,length:[...raw].length,category,idx:tokens.length};
+   tokens.push(t);sent.push(t);if(isWord(t))wordList.push(t);
+   if(category==='punctuation'&&/[.!?]/u.test(raw)){
+     const prev=parts[i-1]?.[0]?.toLowerCase().replace(/\.$/,'')||'';
+     const abbreviation=raw==='.'&&(ABBR.has(prev)||(prev.length===1&&/\p{L}/u.test(prev)));
+     const decimal=raw==='.'&&/^\p{N}+$/u.test(prev)&&/^\p{N}+$/u.test(parts[i+1]?.[0]||'');
+     const next=parts[i+1]?.[0]||'';
+     const ellipsis=next==='.'||next==='!'||next==='?';
+     if(!abbreviation&&!decimal&&!ellipsis)closeSentence();
+   }
+  }
+  closeSentence();
+ }
+ for(let i=0;i<wordList.length;i++)wordList[i].relative=wordList.length<=1?0:i/(wordList.length-1);
+ const map=new Map(paras.map(p=>[p.id,{...p,words:[],tokens:[],sentences:[],wordCount:0}]));
+ tokens.forEach(t=>map.get(t.paragraph)?.tokens.push(t));wordList.forEach(w=>map.get(w.paragraph)?.words.push(w));sentences.forEach(s=>map.get(s.paragraph)?.sentences.push(s));
+ const enriched=[...map.values()].map(p=>({...p,wordCount:p.words.length,language:languageOfWords(p.words.map(w=>w.normalized))}));
+ return {original,paragraphs:enriched,sentences,tokens,words:wordList,language:opts.language==='auto'?languageOfWords(wordList.map(x=>x.normalized)):opts.language,detectedLanguage:languageOfWords(wordList.map(x=>x.normalized)),options:opts};
+}
+function stopMask(doc,options={}){
+ const o={...DEFAULTS,...options},stop=o.stopList==='id'?STOP_ID:o.stopList==='en'?STOP_EN:o.stopList==='none'?new Set():new Set([...STOP_ID,...STOP_EN]);
+ const bad=new Set();const normWords=doc.words.map(x=>x.normalized.toLocaleLowerCase());
+ doc.words.forEach((w,i)=>{const n=normWords[i];if(stop.has(n)&&!(o.protect&&PROTECTED.has(n)))bad.add(w.idx);});
+ const phrases=String(o.custom||'').split(/\r?\n|,/).map(s=>s.trim().toLocaleLowerCase()).filter(Boolean).map(s=>s.split(/\s+/));
+ const all=doc.words;
+ for(const phrase of phrases){for(let i=0;i<=all.length-phrase.length;i++){
+  const cand=all.slice(i,i+phrase.length);if(cand.some(w=>w.paragraph!==cand[0].paragraph||w.sentence!==cand[0].sentence))continue;
+  if(cand.every((w,k)=>normWords[i+k]===phrase[k]))cand.forEach(w=>{if(!(o.protect&&PROTECTED.has(w.normalized.toLocaleLowerCase())))bad.add(w.idx);});
+ }}
+ return bad;
+}
+function makeWindows(doc,n,excluded=new Set(),punctuation=false){
+ const result=[],indexed=new Map();for(const t of doc.tokens){if(!indexed.has(t.sentence))indexed.set(t.sentence,[]);if(punctuation||isWord(t))indexed.get(t.sentence).push(t);}
+ for(const p of doc.paragraphs){for(const s of p.sentences){
+   const ts=indexed.get(s.id)||[];
+   for(let i=0;i<=ts.length-n;i++){const seq=ts.slice(i,i+n);if(seq.some(x=>excluded.has(x.idx)))continue;
+     if(!punctuation&&seq.some((t,k)=>k>0&&hasSkippedWord(doc,seq[k-1],t,excluded)))continue;
+     result.push({key:seq.map(x=>x.normalized).join(' '),display:seq.map(x=>x.raw).join(' '),tokens:seq,paragraph:p.id,sentence:s.id,start:seq[0].start,end:seq[n-1].end,relative:(seq[0].relative+seq[n-1].relative)/2});
+   }
+ }}return result;
+}
+// Word positions prevent filtered-out stops from creating n-grams not found in the source.
+function hasSkippedWord(doc,left,right,excluded){return doc.tokens.slice(left.idx+1,right.idx).some(t=>isWord(t)&&excluded.has(t.idx));}
+function statsWindows(doc,windows,denominator,n){
+ const by=new Map(),P=doc.paragraphs.length,sentenceWords=new Map(),wordPos=new Map();
+ for(const word of doc.words){if(!sentenceWords.has(word.sentence))sentenceWords.set(word.sentence,[]);const arr=sentenceWords.get(word.sentence);wordPos.set(word.idx,arr.length);arr.push(word);}
+ for(const hit of windows){if(!by.has(hit.key))by.set(hit.key,{key:hit.key,display:hit.display,n,freq:0,occurrences:[],byParagraph:{}});const obj=by.get(hit.key);obj.freq++;obj.occurrences.push(hit);obj.byParagraph[hit.paragraph]=(obj.byParagraph[hit.paragraph]||0)+1;}
+ const rawUni=new Map();doc.words.forEach(w=>rawUni.set(w.normalized,(rawUni.get(w.normalized)||0)+1));
+ for(const obj of by.values()){
+  const counts=doc.paragraphs.map(p=>obj.byParagraph[p.id]||0),df=counts.filter(Boolean).length;
+  obj.df=df;obj.rel100=denominator?fix(100*obj.freq/denominator):null;obj.dispersion=P?fix(df/P):null;
+  obj.tfidf=P?fix(doc.paragraphs.reduce((a,p,i)=>a+(p.wordCount?counts[i]/p.wordCount:0)*(1+Math.log((1+P)/(1+df))),0)/P,5):null;
+  const mean=obj.freq/P;obj.burstiness=P<2||mean===0?null:fix(counts.reduce((a,c)=>a+(c-mean)**2,0)/P/mean);
+  obj.positions=[0,0,0];obj.occurrences.forEach(h=>{const rel=P===1?0:(h.paragraph-1)/P;obj.positions[Math.min(2,Math.floor(rel*3))]++;});
+  const contexts=new Set();obj.occurrences.forEach(h=>{
+   const sentWords=sentenceWords.get(h.sentence)||[],start=wordPos.get(h.tokens[0].idx)??-1,end=wordPos.get(h.tokens[h.tokens.length-1].idx)??-1;
+   if(start>0)contexts.add('L:'+sentWords[start-1].normalized);if(end>=0&&end+1<sentWords.length)contexts.add('R:'+sentWords[end+1].normalized);
+  });obj.contextDiversity=fix(contexts.size/(Math.max(1,obj.freq)*2));
+  const words=obj.key.split(' '),actualWindows=Math.max(1,windows.length),nwords=Math.max(1,doc.words.length);
+  const prod=words.reduce((a,w)=>a*((rawUni.get(w)||0)/nwords),1);
+  obj.association=(obj.freq>=2&&prod>0)?fix(Math.log2((obj.freq/actualWindows)/prod)):null;
+ }
+ return [...by.values()].sort((a,b)=>b.freq-a.freq||a.key.localeCompare(b.key));
+}
+function frequencyBands(items,qLow=25,qHigh=75){const sorted=[...items].sort((a,b)=>a.freq-b.freq||a.key.localeCompare(b.key));const low=quantile(sorted.map(x=>x.freq),qLow),high=quantile(sorted.map(x=>x.freq),qHigh);const buckets={Lower:[],Median:[],Upper:[]};for(const o of sorted)buckets[o.freq<=low?'Lower':o.freq<=high?'Median':'Upper'].push(o);return {thresholds:{low,high},bands:Object.fromEntries(Object.entries(buckets).map(([k,v])=>[k,{items:v,types:v.length,occurrences:v.reduce((a,o)=>a+o.freq,0)}])),tieRule:'all equal-frequency types go to the lowest applicable band'};}
+function isIDPhrase(s){const first=s.split(' ')[0];return new Set('namun tetapi sedangkan meskipun walaupun padahal sebaliknya karena sebab akibatnya sehingga oleh selain lebih di juga serta jika apabila seandainya mungkin barangkali tampaknya agaknya kemungkinan tidak bukan belum tanpa misalnya contohnya sebagai adalah yaitu yakni didefinisikan menurut berdasarkan data penelitian dan atau'.split(' ')).has(first);}
+function isENPhrase(s){return STOP_EN.has(s.split(' ')[0])||['however','nevertheless','whereas','instead','moreover','furthermore','additionally','apparently','arguably','perhaps','possibly','research','evidence','according','provided','despite','on','in','such','for','as','refers'].includes(s.split(' ')[0]);}
+function sentenceMarkerHits(doc){const hits=[],sentenceWords=new Map();for(const w of doc.words){if(!sentenceWords.has(w.sentence))sentenceWords.set(w.sentence,[]);sentenceWords.get(w.sentence).push(w);}for(const s of doc.sentences){const ws=sentenceWords.get(s.id)||[],arr=ws.map(w=>w.normalized.toLocaleLowerCase());for(const [type,phrases] of Object.entries(MARKERS))for(const phrase of phrases){
+ if(doc.options.language==='id' && !isIDPhrase(phrase))continue;if(doc.options.language==='en' && !isENPhrase(phrase))continue;const parts=phrase.split(' ');for(let i=0;i<=arr.length-parts.length;i++)if(parts.every((p,k)=>p===arr[i+k]))hits.push({type,phrase,paragraph:s.paragraph,sentence:s.id,start:ws[i].start,end:ws[i+parts.length-1].end,excerpt:s.text});}}
+ return hits;}
+function paragraphLengthBins(doc,o){const lengths=doc.paragraphs.map(p=>p.wordCount);const low=o.paragraphBins==='manual'?Number(o.shortMax):quantile(lengths,33),high=o.paragraphBins==='manual'?Number(o.mediumMax):quantile(lengths,67);return {low,high,paragraphs:doc.paragraphs.map(p=>({...p,lengthBand:p.wordCount<=low?'Short':p.wordCount<=high?'Medium':'Long'}))};}
+function lexical(doc,excluded){const words=doc.words.filter(w=>!excluded.has(w.idx)),types=new Set(words.map(w=>w.normalized)),distribution={},capitalizedCandidates=new Map();
+ for(const w of words){if(/^\p{Lu}[\p{L}]{2,}$/u.test(w.raw)&&w.paragraphTokenIndex>0){capitalizedCandidates.set(w.raw,(capitalizedCandidates.get(w.raw)||0)+1);}}for(const w of words){const len=w.length;distribution[len]=(distribution[len]||0)+1;}
+ const n=50,mattr=n<=words.length?fix(words.slice(0,words.length-n+1).reduce((total,_,i)=>total+new Set(words.slice(i,i+n).map(w=>w.normalized)).size/n,0)/(words.length-n+1)):null;
+ const avg=words.length?fix(words.reduce((a,w)=>a+w.length,0)/words.length):null;
+ const f=new Map();words.forEach(w=>f.set(w.normalized,(f.get(w.normalized)||0)+1));
+ return {tokens:words.length,types:types.size,ttr:words.length?fix(types.size/words.length):null,mattr,mattrWindow:n,avgLength:avg,repeatRate:words.length?fix(1-types.size/words.length):null,wordLengths:distribution,mostCommon:[...f].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,20),capitalizedCandidates:[...capitalizedCandidates].filter(x=>x[1]>=2).sort((a,b)=>b[1]-a[1]).slice(0,12)};
+}
+function syntax(doc,hits){const lengths=doc.sentences.map(x=>x.wordCount),mean=lengths.length?lengths.reduce((a,b)=>a+b,0)/lengths.length:0,variance=lengths.length>=2?lengths.reduce((a,x)=>a+(x-mean)**2,0)/lengths.length:null,punc={};doc.tokens.filter(x=>x.category==='punctuation').forEach(t=>punc[t.raw]=(punc[t.raw]||0)+1);
+ let passive=0;for(const w of doc.words){if(/^di[\p{L}]{4,}$/u.test(w.normalized)&&!STOP_ID.has(w.normalized))passive++;}
+ return {sentenceCount:lengths.length,meanSentence:mean?fix(mean):null,variance:variance===null?null:fix(variance),punctuation:punc,passiveCandidates:passive,markers:Object.fromEntries(Object.keys(MARKERS).map(type=>[type,hits.filter(x=>x.type===type).length]))};}
+function paragraphSummary(doc,hits,bands,bigrams,trigrams){return bands.paragraphs.map(p=>{
+ const vocab=new Set(p.words.map(w=>w.normalized)),punc={};p.tokens.filter(t=>t.category==='punctuation').forEach(t=>punc[t.raw]=(punc[t.raw]||0)+1);
+ const frequencies={}, wordLength={};p.words.forEach(w=>wordLength[w.length]=(wordLength[w.length]||0)+1);
+ for(const x of [...bigrams,...trigrams])if(x.byParagraph[p.id])frequencies[x.key]=x.byParagraph[p.id];
+ const markerCounts={};hits.filter(x=>x.paragraph===p.id).forEach(x=>markerCounts[x.type]=(markerCounts[x.type]||0)+1);
+ return {id:p.id,wordCount:p.wordCount,sentences:p.sentences.length,meanSentence:p.sentences.length?fix(p.wordCount/p.sentences.length):null,ttr:p.wordCount?fix(vocab.size/p.wordCount):null,lengthBand:p.lengthBand,position:doc.paragraphs.length<=1?0:fix((p.id-1)/(doc.paragraphs.length-1)),punctuation:punc,wordLength,ngramCounts:frequencies,markerCounts,transitionDensity:p.wordCount?fix(100*((markerCounts.contrast||0)+(markerCounts.cause||0)+(markerCounts.addition||0))/p.wordCount):0};});}
+function evidenceFor(hits,type){const selected=hits.filter(x=>x.type===type),ids=[...new Set(selected.map(x=>x.paragraph))],excerpt=selected[0]?.excerpt?.slice(0,260)||'';return {n:selected.length,paragraphs:ids,excerpt,status:selected.length>=2&&ids.length>=2?'context-supported':selected.length?'rule-based':'unverified'};}
+function classification(doc,lex,syn,hits){const P=doc.paragraphs.length,out={};const put=(key,label,justification,data,confidence)=>out[key]={label,justification,evidence:data?.excerpt||'',paragraphs:data?.paragraphs||[],status:confidence||(data?.status||'unverified')};
+ const no={excerpt:'',paragraphs:[],status:'unverified'};const marker=(x)=>evidenceFor(hits,x);
+ const all=doc.original;
+ const citeMatches=[...all.matchAll(/\b(?:19|20)\d{2}\b|\bet al\.?\b|\((?:[^()]{2,35}),\s*(?:19|20)\d{2}\)/giu)];
+ if(citeMatches.length>=2&&P>=2){const ids=[...new Set(citeMatches.map(m=>doc.paragraphs.find(p=>m.index>=p.start&&m.index<p.end)?.id).filter(Boolean))];put('genre','Academic','Multiple citation-like strings; not proof of an academic publication.',{excerpt:doc.paragraphs.find(p=>ids.includes(p.id))?.text.slice(0,220),paragraphs:ids,status:'rule-based'});}
+ else put('genre','Undetermined','Genre requires cross-document or stronger contextual evidence.',no);
+ put('era','Unknown','Era cannot be dated reliably from surface lexicon.',no);
+ put('audience','Unknown','Intended readership is not identified by token statistics.',no);
+ const contrast=marker('contrast'),cause=marker('cause'),example=marker('example'),def=marker('definition'),evid=marker('evidence'),ep=marker('epistemic');
+ if(contrast.n>=2&&contrast.paragraphs.length>=2)put('framing','Comparative','Contrast markers recur across paragraphs; actual argumentative relations still require reading.',contrast);
+ else if(cause.n>=2&&cause.paragraphs.length>=2)put('framing','Cause–Effect','Cause markers recur across paragraphs; causal claims not validated.',cause);
+ else put('framing','Undetermined','No sufficiently dispersed rhetorical markers.',no);
+ const candidates=[['Authority / Citation',evid],['Definition',def],['Empirical Evidence',evid],['Historical Example',no],['Contrast',contrast],['Personal Anecdote',no],['Hypothetical Case',no],['Analogy',no],['Common Knowledge',no]];const chosen=candidates.find(([,v])=>v.n>=2&&v.paragraphs.length>=2);
+ if(chosen)put('common',''+chosen[0],`Recurring ${chosen[0].toLowerCase()} cues; a topos hypothesis, not a proof of function.`,chosen[1]);else put('common','Undetermined','Topos cannot be inferred safely from isolated matches.',no);
+ if(ep.n>=3&&ep.paragraphs.length>=2)put('temperament','Exploratory','Multiple qualified propositions; textual expression only, not personality.',ep);else put('temperament','Undetermined','Sentence length and punctuation do not establish temperament.',no);
+ for(const [k,v]of Object.entries(out))v.manual=false;
+ return out;
+}
+function graphFor(doc,hits,mode='lexical',maxNodes=24){let nodes=[],edges=[];
+ if(mode==='lexical'){
+ const words=doc.words;const top=new Map();words.forEach(w=>top.set(w.normalized,(top.get(w.normalized)||0)+1));const allowed=new Set([...top].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,maxNodes).map(x=>x[0]));nodes=[...allowed].map(id=>({id,label:id,kind:'lexeme',frequency:top.get(id)}));const e=new Map();for(let i=1;i<words.length;i++){const a=words[i-1],b=words[i];if(a.sentence!==b.sentence||!allowed.has(a.normalized)||!allowed.has(b.normalized))continue;const k=JSON.stringify([a.normalized,b.normalized]);e.set(k,(e.get(k)||0)+1);}edges=[...e].map(([k,w])=>{const [source,target]=JSON.parse(k);return {source,target,weight:w,normalized:fix(w/Math.max(1,words.length-1)),relation:'directed adjacent tokens'};});
+ }else if(mode==='syntax'){
+ const sIds=new Set(hits.map(h=>h.sentence));const sList=[...sIds].slice(0,Math.min(18,maxNodes-6));const hsel=hits.filter(h=>sList.includes(h.sentence));const categories=[...new Set(hsel.map(h=>h.type))];nodes=[...categories.map(c=>({id:'M:'+c,label:c,kind:'marker class'})),...sList.map(i=>({id:'S:'+i,label:'S'+i,kind:'sentence'}))];const e=new Map();hsel.forEach(h=>{const k=JSON.stringify(['M:'+h.type,'S:'+h.sentence]);e.set(k,(e.get(k)||0)+1);});edges=[...e].map(([k,weight])=>{const [source,target]=JSON.parse(k);return {source,target,weight,normalized:fix(weight/Math.max(1,hsel.length)),relation:'marker observed in sentence'};});
+ }else {
+ const paras=doc.paragraphs.slice(0,maxNodes);nodes=paras.map(p=>({id:'P:'+p.id,label:'P'+p.id,kind:'paragraph',frequency:p.wordCount}));for(let i=0;i<paras.length-1;i++){const a=new Set(paras[i].words.map(w=>w.normalized)),b=new Set(paras[i+1].words.map(w=>w.normalized));let common=0;for(const x of a)if(b.has(x))common++;const union=new Set([...a,...b]).size;edges.push({source:'P:'+paras[i].id,target:'P:'+paras[i+1].id,weight:1,normalized:fix(union?common/union:0),relation:'next paragraph (Jaccard annotation)'});}
+ }
+ return {nodes,edges,mode};
+}
+function graphMetrics(g,min=1){const edges=g.edges.filter(e=>e.weight>=min),adj=new Map(g.nodes.map(n=>[n.id,new Set()])),ins=new Map(g.nodes.map(n=>[n.id,0])),outs=new Map(g.nodes.map(n=>[n.id,0])),weighted=new Map(g.nodes.map(n=>[n.id,0]));
+ for(const e of edges){if(!adj.has(e.source)||!adj.has(e.target))continue;adj.get(e.source).add(e.target);adj.get(e.target).add(e.source);outs.set(e.source,outs.get(e.source)+1);ins.set(e.target,ins.get(e.target)+1);weighted.set(e.source,weighted.get(e.source)+e.weight);weighted.set(e.target,weighted.get(e.target)+e.weight);}
+ const seen=new Set(),components=[];for(const node of g.nodes){if(seen.has(node.id))continue;const comp=[],stack=[node.id];seen.add(node.id);while(stack.length){const cur=stack.pop();comp.push(cur);for(const to of adj.get(cur)||[])if(!seen.has(to)){seen.add(to);stack.push(to);}}components.push(comp);}
+ const total=edges.reduce((a,e)=>a+2*e.weight,0);return {edges,components:components.length,nodeStats:g.nodes.map(n=>({...n,inDegree:ins.get(n.id)||0,outDegree:outs.get(n.id)||0,degree:(ins.get(n.id)||0)+(outs.get(n.id)||0),weightedDegree:weighted.get(n.id)||0,strengthShare:total?fix((weighted.get(n.id)||0)/total):null})).sort((a,b)=>b.weightedDegree-a.weightedDegree)};
+}
+function analyze(original,config={}){
+ const o={...DEFAULTS,...config},doc=preprocess(original,o),excluded=stopMask(doc,o),rawW=makeWindows(doc,Number(o.ngram),new Set()),filteredW=makeWindows(doc,Number(o.ngram),excluded);
+ const raw=statsWindows(doc,rawW,doc.words.length,Number(o.ngram)),filtered=statsWindows(doc,filteredW,doc.words.length-excluded.size,Number(o.ngram));
+ const active=o.mode==='filtered'?filtered:raw;const bands=frequencyBands(active,Number(o.qLow),Number(o.qHigh));
+ const allBi=statsWindows(doc,makeWindows(doc,2),doc.words.length,2),allTri=statsWindows(doc,makeWindows(doc,3),doc.words.length,3);
+ const marks=sentenceMarkerHits(doc),len=paragraphLengthBins(doc,o),lex=lexical(doc,new Set()),syntaxData=syntax(doc,marks),paragraphs=paragraphSummary(doc,marks,len,allBi,allTri);
+ const profile=classification(doc,lex,syntaxData,marks);
+ const punctuation=o.punctuation==='separate'?statsWindows(doc,makeWindows(doc,2,new Set(),true),doc.tokens.length,2).filter(x=>x.key.split(' ').some(x=>/^[^\p{L}\p{N}]+$/u.test(x))):[];
+ const warnings=[];
+ if(doc.words.length<30)warnings.push('Insufficient data: fewer than 30 word tokens; interpretation of writing style is not supported.');
+ if(doc.paragraphs.length<2)warnings.push('Insufficient data for interparagraph dispersion, burstiness interpretation, and longitudinal topology.');
+ if(!lex.mattr)warnings.push('MATTR-50 unavailable: requires at least 50 tokens.');
+ if(doc.words.length<100)warnings.push('Very short corpus: n-gram rankings, lexical diversity and stylistic hypotheses are unstable.');
+ return {config:o,doc,excluded,raw,filtered,active,allBi,allTri,punctuation,marks,bands,lex,syntax:syntaxData,paragraphs,profile,warnings};
+}
+function buildPreset(a,kind='A',overrides={},weights=[40,30,30]){
+ const modes={A:['High-Fidelity Stylistic Reconstruction','rekonstruksi pola gaya terukur', 'Prioritaskan panjang kalimat, tanda baca, penanda penghubung yang terobservasi berulang, serta variasi panjang paragraf. Jangan mengasumsikan register tanpa verifikasi manual.'],B:['Rhetorical Structure Transfer','transfer struktur retorika', 'Prioritaskan framing, urutan argumen, penempatan bukti, pertentangan, dan topoi yang benar-benar didukung kutipan kontekstual.'],C:['Lexical & Syntactic Adaptation','adaptasi leksikal dan sintaksis','Prioritaskan repetisi leksikal, panjang kalimat dan penanda penghubung yang terukur; anggap kompleksitas sintaksis terperinci sebagai undetermined tanpa parser. Jangan meniru kalimat korpus.'],D:['Balanced Semantic Paraphrase','parafrase semantik seimbang','Prioritaskan preservasi isi sumber; gunakan hanya karakteristik gaya yang kuat sebagai preferensi lunak.']};
+ const [name,goal,specific]=modes[kind]||modes.A;const profile=Object.fromEntries(Object.entries(a.profile).map(([k,v])=>[k,{...v,label:overrides[k]&&overrides[k]!=='auto'?overrides[k]:v.label,manual:!!(overrides[k]&&overrides[k]!=='auto')} ]));
+ const good=Object.entries(profile).filter(([,v])=>(v.manual&&!/^(undetermined|unknown)$/i.test(v.label))||v.status==='context-supported');const unknown=Object.entries(profile).filter(([,v])=>!v.manual&&v.status!=='context-supported').map(([k])=>k);
+ const topMarkers=Object.entries(a.syntax.markers).filter(([,v])=>v>=2).sort((x,y)=>y[1]-x[1]).slice(0,5).map(([k,v])=>`${k} (${v} kemunculan)`);
+ const frequent=a.active.filter(x=>x.freq>=2&&x.df>=2).slice(0,7).map(x=>`${x.display} (f=${x.freq}, ${x.df} paragraf)`);
+ const p=a.paragraphs;const counts=p.reduce((m,x)=>(m[x.lengthBand]=(m[x.lengthBand]||0)+1,m),{});
+ const w=weights.map(x=>Number(x)||0),sum=w.reduce((x,y)=>x+y,0)||1,order=['Leksikal','Sintaksis','Diskursus'].map((name,i)=>({name,weight:Math.round(100*w[i]/sum)})).sort((x,y)=>y.weight-x.weight);
+ const profileLines=good.length?good.map(([k,v])=>`- ${k}: ${v.label} [${v.manual?'manual override; hipotesis pengguna':'didukung lintas paragraf'}; paragraf ${v.paragraphs.join(',')||'—'}]`).join('\n'):'- Belum ada klasifikasi retoris yang cukup kuat. Jangan menentukan genre, audience, era, framing atau temperament secara otomatis.';
+ return `PRESET ${kind} — ${name}\n\nTASK DEFINITION\nParafrase teks T menggunakan ${goal}. Korpus referensi berfungsi sebagai petunjuk gaya, bukan sumber fakta atau sumber frasa yang harus disalin.\n\nTARGET STYLE SIGNATURE\n- Bahasa korpus (${a.config.language==='auto'?'heuristik':'dipilih manual'}): ${a.doc.language}; deteksi heuristik: ${a.doc.detectedLanguage}. Sampel: ${a.lex.tokens} token, ${a.doc.paragraphs.length} paragraf, ${a.syntax.sentenceCount} kalimat.\n- Bobot prioritas instruksional (bukan skor kesamaan): ${order.map(x=>x.name+' '+x.weight+'%').join('; ')}.\n- Klasifikasi yang boleh dipertimbangkan:\n${profileLines}\n\nMEASURED CHARACTERISTICS\n- Rata-rata kata/kalimat: ${a.syntax.meanSentence??'undetermined'}, varians: ${a.syntax.variance??'insufficient data'}.\n- Rata-rata panjang kata: ${a.lex.avgLength??'undetermined'} karakter; TTR: ${a.lex.ttr??'undetermined'} (sensitif ukuran); MATTR-50: ${a.lex.mattr??'insufficient data'}.\n- Panjang paragraf (quantile/manual): Short ${counts.Short||0}, Medium ${counts.Medium||0}, Long ${counts.Long||0}; jangan perlakukan urutan paragraf sebagai waktu sejarah.\n- Marker yang terobservasi sedikitnya dua kali: ${topMarkers.join('; ')||'tidak tersedia'}.\n- N-gram berulang lintas paragraf: ${frequent.join('; ')||'tidak cukup bukti'}; ini bentuk permukaan, bukan bukti fungsi semantik.\n\nSUPPORTED RHETORICAL TENDENCIES\n${good.length?good.map(([k,v])=>`- ${k}: ${v.label}; ${v.manual?'dipilih manual—bukan kesimpulan statistik':v.justification}`).join('\n'):'- Undetermined; baca konteks secara manual sebelum menerapkan kategori retorika.'}\n\nTRANSFORMATION INSTRUCTIONS\n${specific}\n- Utamakan dimensi dalam urutan bobot: ${order.map(x=>x.name).join(' > ')}; bobot hanya mengatur penekanan, bukan klaim empiris.\n- Gunakan panjang dan variasi kalimat sebagai panduan fleksibel, bukan kuota absolut.\n- Hindari menyalin n-gram referensi panjang, identitas retoris yang tidak terverifikasi, atau pengulangan leksikal bertopik spesifik.\n- Sesuaikan bahasa dan terminologi dengan T bila korpus campuran.\n\nSEMANTIC INVARIANTS (WAJIB)\nPertahankan proposisi inti, relasi sebab-akibat/kontras/syarat, semua negasi, entitas bernama, angka, atribusi, tingkat kepastian, istilah teknis yang bermakna, dan posisi argumentatif sumber.\n\nNEGATIVE CONSTRAINTS\nJangan menambah fakta, referensi, kutipan, kausalitas, penilaian atau angka baru. Jangan mengubah sikap/tesis sumber. Jangan mereproduksi frasa panjang dari korpus referensi. Jangan berpura-pura telah menggunakan POS/dependency parser atau semantik model.\n\nUNCERTAIN PROPERTIES EXCLUDED FROM MANDATORY RULES\n${unknown.length?unknown.join(', '):'Tidak ada klasifikasi otomatis lemah yang diwajibkan; pemeriksaan manusia tetap perlu.'}\nKlasifikasi hasil pilihan manual adalah preferensi operator, bukan temuan korpus.\n\nINPUT TEXT T\n{{TEXT_TO_PARAPHRASE}}\n\nVALIDATION CHECKLIST\n[ ] Makna, negasi, relasi logis, posisi argumentatif, dan modalitas tetap.\n[ ] Nama, angka, atribusi, istilah teknis dan referensi tetap.\n[ ] Tidak ada fakta, klaim, sumber atau asumsi gaya baru.\n[ ] Gaya menggunakan fitur terukur tanpa imitasi literal.\n[ ] Perubahan struktur tidak meniadakan hubungan argumen.\n\nOUTPUT\nHasil parafrase saja, kecuali T memerlukan penanda ambiguitas agar invarian semantik tetap terjaga.`;
+}
+root.StyloCore={DEFAULTS,STOP,MARKERS,preprocess,stopMask,makeWindows,statsWindows,frequencyBands,quantile,analyze,graphFor,graphMetrics,buildPreset};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+(function(){
+'use strict';
+const C=window.StyloCore,$=id=>document.getElementById(id);
+let current=null,selected=null,overrides={},activePrompt='',currentGraph=null;
+// Preserve each manually edited preset independently. A draft's base records the
+// generated output it originated from, so later config changes can be flagged.
+const promptDrafts=new Map();
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=n=>n==null?'n/a':Number(n).toLocaleString('id-ID',{maximumFractionDigits:3});
+const cleanText=s=>String(s||'').replace(/\s+/g,' ').trim();
+const status=(txt,cls='secondary')=>{const el=$('status');el.className='small text-'+cls;el.textContent=txt;};
+const row=(...cells)=>'<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+function getConfig(){return {
+ language:$('language').value,mode:$('mode').value,stopList:$('stopList').value,custom:$('customStop').value,protect:$('protect').checked,
+ punctuation:$('punct').value,ngram:+$('nsize').value,qLow:+$('qLow').value,qHigh:+$('qHigh').value,normalization:$('normalization').value,
+ caseFold:$('casefold').checked,paragraphBins:$('paraBins').value,shortMax:+$('shortMax').value,mediumMax:+$('mediumMax').value,
+ weights:[+$('weightLex').value,+$('weightSyn').value,+$('weightDisc').value],edgeMin:+$('minEdge').value
+};}
+function showCounts(){const value=$('corpus').value;const P=C.preprocess(value);$('liveWords').textContent=num(P.words.length);$('liveParas').textContent=num(P.paragraphs.length);$('liveChars').textContent=num(value.length);}
+function validate(o){if(o.qLow>=o.qHigh)return 'Lower quantile harus lebih kecil daripada Upper quantile.';if(o.paragraphBins==='manual'&&o.shortMax>o.mediumMax)return 'Batas Short tidak boleh melebihi Medium.';return null;}
+function run(){const val=$('corpus').value,o=getConfig(),err=validate(o);if(err){status(err,'danger');return;}if(!val.trim()){status('Masukkan korpus terlebih dahulu.','danger');return;}
+ if(val.length>500000){status('Korpus melebihi batas 500.000 karakter untuk menjaga performa browser.','danger');return;}
+ try{current=C.analyze(val,o);selected=null;render();status(`Analisis selesai: ${num(current.lex.tokens)} token, ${num(current.doc.paragraphs.length)} paragraf.`,'success');}catch(e){console.error(e);status('Analisis gagal: '+e.message,'danger');}
+}
+function autoRun(){if(current&&$('corpus').value.trim())run();else {showThresholdText();showWeights();}}
+function render(){if(!current)return;$('empty').hidden=true;$('results').hidden=false;const a=current;
+ $('diagnostics').innerHTML=a.warnings.map(x=>`<div class="alert alert-warning py-2 small mb-2">${escapeHTML(x)}</div>`).join('')||'<div class="small text-success">Tidak ada peringatan ukuran minimum yang terdeteksi. Ini bukan validasi semantik.</div>';
+ $('metricCards').innerHTML=[['Word tokens',num(a.lex.tokens)],['Vocabulary types',num(a.lex.types)],['TTR',num(a.lex.ttr)],['MATTR-50',num(a.lex.mattr)],['Mean sentence',num(a.syntax.meanSentence)],['Mean word chars',num(a.lex.avgLength)],['Paragraphs',num(a.doc.paragraphs.length)],['Language mode',a.doc.language]].map(([label,value])=>`<div class="col-6 col-lg-3"><div class="metric"><div class="metric-label">${label}</div><div class="metric-value">${escapeHTML(value)}</div></div></div>`).join('');
+ $('filterCaption').textContent=`Mode ${a.config.mode}; ${a.excluded.size} token dikenai filter. Raw ${a.raw.length} n-gram types / filtered ${a.filtered.length} types untuk n=${a.config.ngram}. Filter tidak memutus akses ke analisis retorika mentah. Deteksi bahasa otomatis: ${a.doc.detectedLanguage}; mode dipilih: ${a.doc.language}.`;
+ renderComparison();renderNgrams();renderBands();renderParagraphs();renderSyntax();renderProfile();fillSelected();renderGraph();renderPreset();showWeights();showThresholdText();
+}
+function renderComparison(){const a=current,raw=new Map(a.raw.map(x=>[x.key,x])),filtered=new Map(a.filtered.map(x=>[x.key,x]));const all=[...new Set([...raw.keys(),...filtered.keys()])].map(k=>({k,r:raw.get(k)?.freq||0,f:filtered.get(k)?.freq||0})).sort((x,y)=>Math.max(y.r,y.f)-Math.max(x.r,x.f)||x.k.localeCompare(y.k));
+ $('compareTable').innerHTML=all.slice(0,12).map(x=>row(`<span class="mono">${escapeHTML(x.k)}</span>`,num(x.r),num(x.f),num(x.f-x.r))).join('')||'<tr><td colspan="4">Tidak ada n-gram.</td></tr>';
+ $('compareBox').hidden=current.config.mode!=='compare';
+}
+function ngramTable(items,id){const list=items.slice(0,35);$(id).innerHTML=list.map((r,i)=>`<tr><td><button class="linklike mono text-start" data-ngram="${escapeHTML(r.key)}">${escapeHTML(r.display)}</button></td><td>${num(r.freq)}</td><td>${num(r.rel100)}</td><td>${num(r.df)}</td><td>${num(r.dispersion)}</td><td>${num(r.tfidf)}</td><td>${num(r.burstiness)}</td></tr>`).join('')||'<tr><td colspan="7" class="text-muted">Tidak ada n-gram untuk ukuran ini.</td></tr>';
+ $(id).querySelectorAll('button[data-ngram]').forEach(btn=>btn.addEventListener('click',()=>chooseNgram(btn.dataset.ngram)));
+}
+function renderNgrams(){const a=current,filter=a.config.mode==='filtered'?a.excluded:new Set(),den=a.config.mode==='filtered'?a.doc.words.length-a.excluded.size:a.doc.words.length;
+ const bi=a.config.mode==='filtered'?C.statsWindows(a.doc,C.makeWindows(a.doc,2,filter),den,2):a.allBi;
+ const tri=a.config.mode==='filtered'?C.statsWindows(a.doc,C.makeWindows(a.doc,3,filter),den,3):a.allTri;
+ ngramTable(bi,'bigramTable');ngramTable(tri,'trigramTable');
+ $('puncBox').hidden=a.config.punctuation!=='separate';$('punctTable').innerHTML=a.punctuation.slice(0,14).map(x=>row(`<span class="mono">${escapeHTML(x.display)}</span>`,num(x.freq),num(x.df))).join('')||'<tr><td colspan="3">Tidak ada pasangan tanda baca.</td></tr>';
+}
+function renderBands(){const b=current.bands;
+ $('bandCaption').textContent=`Tipe n-gram aktif: ${current.active.length}. Kuantil nearest-lower-rank dari frekuensi TYPE: q${current.config.qLow}=${b.thresholds.low??'n/a'}, q${current.config.qHigh}=${b.thresholds.high??'n/a'}. Semua frekuensi sama dikelompokkan ke band terendah yang memenuhi batas.`;
+ $('bandTable').innerHTML=Object.entries(b.bands).map(([name,x])=>row(name,num(x.types),num(x.occurrences),name==='Lower'?`f ≤ ${b.thresholds.low??'—'}`:name==='Median'?`${b.thresholds.low??'—'} < f ≤ ${b.thresholds.high??'—'}`:`f > ${b.thresholds.high??'—'}`,escapeHTML(x.items.slice(0,4).map(o=>o.display).join(' • ')))).join('');
+}
+function renderParagraphs(){const a=current;$('paraTable').innerHTML=a.paragraphs.map(p=>row(`P${p.id}`,num(p.wordCount),num(p.sentences),num(p.meanSentence),num(p.ttr),p.lengthBand,num(p.position))).join('');
+ $('paraLengthInfo').textContent=`Batas panjang paragraf: Short ≤ ${C.quantile(a.paragraphs.map(p=>p.wordCount),33)??'—'} dan Medium ≤ ${C.quantile(a.paragraphs.map(p=>p.wordCount),67)??'—'} berdasarkan kuantil; dalam mode manual, gunakan batas input di konfigurasi.`;
+ if(a.config.paragraphBins==='manual')$('paraLengthInfo').textContent=`Manual: Short ≤ ${a.config.shortMax} kata; Medium ≤ ${a.config.mediumMax} kata; Long di atasnya.`;
+ const dist=a.lex.wordLengths,entries=Object.entries(dist).sort((a,b)=>+a[0]-+b[0]);$('wordLengthBar').innerHTML=entries.map(([n,c])=>`<div class="d-flex align-items-center gap-2 mb-1 small"><span class="mono" style="min-width:65px">${escapeHTML(n)} chars</span><div class="bartrack flex-grow-1"><div class="barfill" style="width:${Math.max(0,Math.min(100,c/a.lex.tokens*100))}%"></div></div><span class="text-muted" style="min-width:40px">${num(c)}</span></div>`).join('');
+}
+function renderSyntax(){const a=current;
+ $('markerTable').innerHTML=Object.entries(a.syntax.markers).map(([k,c])=>row(escapeHTML(k),num(c),num([...new Set(a.marks.filter(x=>x.type===k).map(x=>x.paragraph))].length),a.marks.filter(x=>x.type===k)[0]?`<span class="small">${escapeHTML(cleanText(a.marks.filter(x=>x.type===k)[0].excerpt).slice(0,110))}</span>`:'—')).join('');
+ $('punctCounts').innerHTML=Object.entries(a.syntax.punctuation).sort((x,y)=>y[1]-x[1]).slice(0,12).map(([s,n])=>`<span class="mini-pill mono">${escapeHTML(s)} · ${num(n)}</span>`).join('')||'Tidak ada tanda baca.';
+ $('passiveInfo').textContent=`Indikator awalan di-: ${a.syntax.passiveCandidates}. Ini hanya kandidat bentuk permukaan; tidak membuktikan kalimat pasif. Kapitalisasi berulang (kandidat entitas, bukan NER): ${a.lex.capitalizedCandidates.map(x=>x[0]+' ('+x[1]+')').join(', ')||'tidak tersedia'}.`;
+}
+function chooseNgram(key){selected=key;fillSelected();$('kwic').scrollIntoView({block:'nearest',behavior:'smooth'});}
+function fillSelected(){const a=current;if(!a)return;const dataset=[...a.allBi,...a.allTri,...a.punctuation,...(a.config.mode==='filtered'?a.raw:a.filtered),...a.active],uniq=new Map(dataset.map(x=>[x.key,x]));
+ const list=[...uniq.values()].sort((x,y)=>y.freq-x.freq);if(!selected||!uniq.has(selected))selected=list[0]?.key||null;
+ $('ngramSelect').innerHTML=list.slice(0,160).map(x=>`<option value="${escapeHTML(x.key)}" ${x.key===selected?'selected':''}>${escapeHTML(x.display)} (${x.freq})</option>`).join('');
+ const obj=uniq.get(selected);if(!obj){$('kwicContent').textContent='Tidak ada n-gram untuk diperiksa.';$('heatmap').innerHTML='';$('positionalChart').innerHTML='';return;}
+ const detail=object=>Object.keys(object.byParagraph).map(id=>`P${id}: ${object.byParagraph[id]}`).join(', ');
+ const candidateMarks=a.marks.filter(m=>obj.occurrences.some(o=>m.sentence===o.sentence&&o.start<=m.end&&m.start<=o.end));const candidateTypes=[...new Set(candidateMarks.map(x=>x.type))];const supportingParas=[...new Set(candidateMarks.map(x=>x.paragraph))];
+ const inferredFunction=candidateTypes.length?`candidate ${candidateTypes.join('/')} (${supportingParas.length>=2?'context-supported':'rule-based'}; contextual review required)`:'unverified — no directly overlapping listed rhetorical marker';
+ $('ngramInfo').textContent=`${obj.freq} total • ${obj.df} paragraf • per 100 token: ${num(obj.rel100)} • konteks beragam: ${num(obj.contextDiversity)} • asosiasi PMI: ${num(obj.association)} (n≥2; tidak mengukur kesamaan makna) • ${detail(obj)} • function: ${inferredFunction}`;
+ $('kwicContent').innerHTML=obj.occurrences.slice(0,28).map((h,i)=>{
+  const p=a.doc.paragraphs[h.paragraph-1],start=Math.max(p.start,h.start-65),end=Math.min(p.end,h.end+75);
+  return `<div class="concordance"><div class="small text-muted mb-1">#${i+1} · Paragraf ${h.paragraph}, kalimat ${h.sentence} · offset ${h.start}–${h.end} · pos. relatif ${num(h.relative)}</div><div class="kwic-text">${escapeHTML(a.doc.original.slice(start,h.start))}<mark>${escapeHTML(a.doc.original.slice(h.start,h.end))}</mark>${escapeHTML(a.doc.original.slice(h.end,end))}</div></div>`;
+ }).join('');
+ const max=Math.max(1,...a.paragraphs.map(p=>obj.byParagraph[p.id]||0));
+ $('heatmap').innerHTML=a.paragraphs.map(p=>{const f=obj.byParagraph[p.id]||0,density=p.wordCount?100*f/p.wordCount:0;return `<button type="button" class="heat-cell" title="P${p.id}: ${f} kemunculan, ${num(density)} per 100 kata" style="--heat:${f/max}"><span>P${p.id}</span><strong>${f}</strong></button>`;}).join('');
+ $('heatmap').querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>{const p=a.doc.paragraphs[i];$('paragraphDetail').textContent=`P${p.id}: ${p.wordCount} kata, posisi ${num(a.paragraphs[i].position)}, panjang kata ${JSON.stringify(a.paragraphs[i].wordLength)}. ${p.text.slice(0,650)}`;}));
+ drawLineChart('positionalChart',a.paragraphs.map(p=>({x:'P'+p.id,y:p.wordCount?100*(obj.byParagraph[p.id]||0)/p.wordCount:0})),`Density / 100 words`,true);
+ $('selectedOccurrences').textContent=Object.entries(obj.byParagraph).map(([k,v])=>`P${k}: ${v} @ ${num(a.paragraphs[+k-1]?.position)}`).join(' | ');
+}
+function drawLineChart(id,data,title,isDensity){const holder=$(id),W=820,H=190,left=43,bottom=155;holder.innerHTML='';if(!data.length){holder.textContent='No data';return;}
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('role','img');svg.setAttribute('aria-label',title);
+ const add=(tag,attrs,text)=>{const el=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs||{}))el.setAttribute(k,v);if(text!=null)el.textContent=text;svg.appendChild(el);return el;};
+ const max=Math.max(1,...data.map(x=>x.y));const x=i=>left+(W-left-20)*(data.length===1?.5:i/(data.length-1));const y=v=>bottom-v/max*(bottom-25);
+ for(let j=0;j<=4;j++){const yy=bottom-j*(bottom-25)/4;add('line',{x1:left,y1:yy,x2:W-15,y2:yy,stroke:'#e6e9ef','stroke-width':1});add('text',{x:5,y:yy+4,fill:'#768496','font-size':11},String((max*j/4).toFixed(1)));}
+ add('polyline',{points:data.map((d,i)=>`${x(i)},${y(d.y)}`).join(' '),fill:'none',stroke:'#3a6f80','stroke-width':2.6,'stroke-linejoin':'round'});
+ data.forEach((d,i)=>{add('circle',{cx:x(i),cy:y(d.y),r:data.length>50?2.2:4,fill:'#214e62'});if(data.length<22)add('text',{x:x(i),y:bottom+18,'text-anchor':'middle',fill:'#657789','font-size':10},d.x);});
+ add('text',{x:W/2,y:H-5,fill:'#617385','font-size':11,'text-anchor':'middle'},title);holder.appendChild(svg);
+}
+const OPTIONS={genre:['Undetermined','Popular','Investigative','Opinion / Editorial','Academic','Essayistic','Journalistic','Technical','Hybrid'],era:['Unknown','Classical','Early Modern','Modern','Contemporary','Custom Period'],audience:['Unknown','General Public','Students','Academic Readers','Professional Readers','Specialist Readers','Policy / Institutional Readers','Mixed'],framing:['Undetermined','Expository','Problem–Solution','Cause–Effect','Comparative','Dialectical','Narrative','Critical / Counterargument','Interpretive','Hybrid'],common:['Undetermined','Definition','Analogy','Historical Example','Empirical Evidence','Personal Anecdote','Authority / Citation','Common Knowledge','Contrast','Hypothetical Case','Mixed'],temperament:['Undetermined','Analytical','Assertive','Skeptical','Polemical','Reflective','Exploratory','Detached','Persuasive','Ironic','Hybrid']};
+function renderProfile(){const a=current;$('profileGrid').innerHTML=Object.entries(a.profile).map(([k,v])=>{const isMulti=k==='genre';const values=Array.isArray(overrides[k])?overrides[k]:[k==='era'&&String(overrides[k]||'').startsWith('Custom Period')?'Custom Period':overrides[k]];return `<div class="col"><div class="profile-card"><div class="d-flex justify-content-between align-items-center gap-2"><h3 class="h6 text-capitalize mb-0">${k==='common'?'Common-placing':escapeHTML(k)}</h3><span class="evidence ${v.status==='context-supported'?'context':''}">${escapeHTML(v.status)}</span></div><select class="form-select form-select-sm mt-2" data-override="${k}" aria-label="Override ${k}" ${isMulti?'multiple size="4"':''}><option value="auto" ${!overrides[k]?'selected':''}>Auto · ${escapeHTML(v.label)}</option>${OPTIONS[k].map(value=>`<option value="${escapeHTML(value)}" ${values.includes(value)?'selected':''}>${escapeHTML(value)}</option>`).join('')}</select>${isMulti?'<div class="note">Multi-label: Cmd/Ctrl + klik untuk memilih lebih dari satu.</div>':''}${k==='era'&&String(overrides.era||'').startsWith('Custom Period')?`<input class="form-control form-control-sm mt-2" id="customEra" placeholder="Custom period (e.g. 1950–1970)" value="${escapeHTML(String(overrides.era||'').replace(/^Custom Period:?\s*/,''))}">`:''}<div class="small text-muted mt-2">${escapeHTML(v.justification)}</div><div class="small mt-2"><b>Observed evidence:</b> ${v.evidence?`“${escapeHTML(cleanText(v.evidence).slice(0,190))}”`:'Belum tersedia'} <span class="text-muted">${v.paragraphs.map(x=>'P'+x).join(', ')}</span></div></div></div>`;}).join('');
+ $('profileGrid').querySelectorAll('select').forEach(s=>s.addEventListener('change',()=>{const k=s.dataset.override;if(k==='genre'){const values=[...s.selectedOptions].map(x=>x.value).filter(x=>x!=='auto');if(!values.length)delete overrides[k];else overrides[k]=values;}else if(s.value==='auto')delete overrides[k];else overrides[k]=s.value;renderProfile();renderPreset();}));
+ const eraInput=$('customEra');if(eraInput)eraInput.addEventListener('input',()=>{overrides.era=eraInput.value.trim()?`Custom Period: ${eraInput.value.trim()}`:'Custom Period';renderPreset();});
+}
+function renderGraph(){const a=current;if(!a)return;const layer=$('layer').value,edgeMin=+$('minEdge').value,graph=C.graphFor(a.doc,a.marks,layer,layer==='lexical'?24:30),metrics=C.graphMetrics(graph,edgeMin);currentGraph={graph,metrics};
+ $('graphCaption').textContent=layer==='lexical'?'Lexical: node=top lexeme; directed edge=adjacent word within sentence; weight=count; normalized=count/total adjacent windows.':layer==='syntax'?'Syntax proxy: node=rule-based marker class or sentence; edge=marker→sentence; weight=hit count; not a dependency graph.':'Discourse: node=paragraph in sequence; directed edge=Pᵢ→Pᵢ₊₁; weight=1 adjacency; annotation normalized=Jaccard lexical overlap (not similarity of meaning).';
+ $('graphMetrics').textContent=`${graph.nodes.length} nodes • ${metrics.edges.length} edges (threshold ≥ ${edgeMin}) • ${metrics.components} weakly connected components. Weighted degree counts incoming+outgoing strength; centrality = strength / total endpoint strength.`;
+ const root=$('graph');root.innerHTML='';const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 800 440');svg.setAttribute('role','img');svg.setAttribute('aria-label','Directed weighted graph of text features');const positions=new Map();const count=graph.nodes.length;
+ graph.nodes.forEach((n,i)=>positions.set(n.id,{x:400+315*Math.cos(-Math.PI/2+2*Math.PI*i/count),y:220+165*Math.sin(-Math.PI/2+2*Math.PI*i/count)}));
+ const defs=document.createElementNS(ns,'defs');const marker=document.createElementNS(ns,'marker');Object.entries({id:'arrow',viewBox:'0 0 10 10',refX:'15',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto-start-reverse'}).forEach(([k,v])=>marker.setAttribute(k,v));const path=document.createElementNS(ns,'path');path.setAttribute('d','M 0 0 L 10 5 L 0 10 z');path.setAttribute('fill','#8d9eab');marker.appendChild(path);defs.appendChild(marker);svg.appendChild(defs);
+ metrics.edges.forEach(e=>{const from=positions.get(e.source),to=positions.get(e.target);if(!from||!to)return;const ln=document.createElementNS(ns,'line');Object.entries({x1:from.x,y1:from.y,x2:to.x,y2:to.y,stroke:'#9babb7','stroke-width':Math.min(6,1+Math.sqrt(e.weight)),opacity:'.68','marker-end':'url(#arrow)'}).forEach(([k,v])=>ln.setAttribute(k,v));const tt=document.createElementNS(ns,'title');tt.textContent=`${e.source} → ${e.target} · ${e.relation}; weight=${e.weight}; normalized=${e.normalized}`;ln.appendChild(tt);ln.addEventListener('click',()=>{$('nodeInfo').textContent=tt.textContent;});svg.appendChild(ln);});
+ graph.nodes.forEach(n=>{const p=positions.get(n.id),circle=document.createElementNS(ns,'circle');Object.entries({cx:p.x,cy:p.y,r:n.kind==='paragraph'?17:Math.min(22,11+Math.sqrt(n.frequency||1)),fill:n.kind==='marker class'?'#b77e57':n.kind==='sentence'?'#7b91a7':'#376980',stroke:'#fff','stroke-width':2,tabindex:0,role:'button'}).forEach(([k,v])=>circle.setAttribute(k,v));const node=metrics.nodeStats.find(x=>x.id===n.id);circle.addEventListener('click',()=>{$('nodeInfo').textContent=`${n.label}: in=${node.inDegree}, out=${node.outDegree}, weighted degree=${node.weightedDegree}, normalized centrality=${node.strengthShare??'n/a'}. ${n.kind}.`;});circle.addEventListener('keydown',ev=>{if(ev.key==='Enter')circle.dispatchEvent(new MouseEvent('click'));});svg.appendChild(circle);const label=document.createElementNS(ns,'text');Object.entries({x:p.x,y:p.y+31,'text-anchor':'middle',fill:'#263c4c','font-size':n.label.length>12?10:12}).forEach(([k,v])=>label.setAttribute(k,v));label.textContent=n.label.length>22?n.label.slice(0,21)+'…':n.label;svg.appendChild(label);});root.appendChild(svg);
+ $('nodeTable').innerHTML=metrics.nodeStats.slice(0,14).map(x=>row(escapeHTML(x.label),num(x.inDegree),num(x.outDegree),num(x.weightedDegree),num(x.strengthShare))).join('')||'<tr><td colspan="5">No nodes</td></tr>';
+}
+function showWeights(){const w=[+$('weightLex').value,+$('weightSyn').value,+$('weightDisc').value],sum=w.reduce((x,y)=>x+y,0)||1;['lexValue','synValue','discValue'].forEach((id,i)=>$(id).textContent=Math.round(w[i]/sum*100)+'%');}
+function showThresholdText(){$('thresholdNotice').textContent=`q${$('qLow').value} / q${$('qHigh').value} · ${$('nsize').value}-gram; paragraph-length mode: ${$('paraBins').value}`;$('manualBins').hidden=$('paraBins').value!=='manual';}
+function expectedPrompt(kind){
+ if(!current)return '';
+ const finalOverrides={...overrides};if(Array.isArray(finalOverrides.genre))finalOverrides.genre=finalOverrides.genre.join(' + ');
+ const template=C.buildPreset(current,kind,finalOverrides,[+$('weightLex').value,+$('weightSyn').value,+$('weightDisc').value]);
+ const target=$('targetText').value.trim();
+ return template.replace('{{TEXT_TO_PARAPHRASE}}',target||'{{TEXT_TO_PARAPHRASE}}');
+}
+function draftState(){
+ const kind=$('preset').value,generated=expectedPrompt(kind),draft=promptDrafts.get(kind);
+ return {kind,generated,draft,edited:!!draft,stale:!!draft&&draft.base!==generated};
+}
+function updatePromptStats(){
+ const p=draftState(),text=$('promptText').value;
+ const state=p.stale?'MANUAL EDIT — SOURCE/CONFIG CHANGED (stale)':p.edited?'MANUAL EDIT — preserved':'GENERATED';
+ $('promptStats').textContent=`${text.length.toLocaleString('id-ID')} karakter · Preset ${p.kind} · ${Object.keys(overrides).length} override · ${state} · ${$('targetText').value.trim()?'T disisipkan (belum dieksekusi)':'T belum diisi'}`;
+ $('promptStats').classList.toggle('text-danger',p.stale);
+ $('bundleInfo').title=p.stale?'Prompt is a preserved manual draft; its text may no longer match live analysis/config. Bundle declares stale=true.':'';
+}
+function renderPreset(){
+ if(!current)return;
+ const kind=$('preset').value,generated=expectedPrompt(kind),draft=promptDrafts.get(kind);
+ activePrompt=generated;
+ const value=draft?draft.text:generated;
+ if($('promptText').value!==value)$('promptText').value=value;
+ updatePromptStats();
+}
+function trackDraft(){
+ if(!current)return;
+ const kind=$('preset').value,generated=expectedPrompt(kind),value=$('promptText').value;
+ if(value===generated)promptDrafts.delete(kind);
+ else if(promptDrafts.has(kind))promptDrafts.get(kind).text=value;
+ else promptDrafts.set(kind,{text:value,base:generated});
+ updatePromptStats();
+}
+function buildUnifiedPayload(){
+ if(!current)throw Error('No analyzed corpus');
+ const a=current,p=draftState(),cfg=getConfig();
+ const safeClassifications={};
+ for(const [name,v] of Object.entries(a.profile)){
+  const manual=Object.prototype.hasOwnProperty.call(overrides,name);
+  const picked=manual?overrides[name]:v.label;
+  safeClassifications[name]={label:picked,evidence_status:manual?'manual-override':v.status,
+   suggested_label:v.label,heuristic:v.justification,supporting_paragraph_ids:v.paragraphs};
+ }
+ return {
+  schema:'corpus-to-codomain/unified-1.1',kind:'paraphrase_style_bundle',
+  preset:p.kind,prompt:$('promptText').value,
+  prompt_state:{edited:p.edited,stale:p.stale,source:'prompt_editor',reset_requires_explicit_action:true},
+  parameters:cfg,
+  style_signature:{
+    language:{detected:a.doc.detectedLanguage,selected:a.doc.language,method:'stopword heuristic'},
+    corpus_size:{words:a.lex.tokens,paragraphs:a.doc.paragraphs.length,sentences:a.syntax.sentenceCount,chars:a.doc.original.length},
+    lexical:{ttr:a.lex.ttr,mattr_50:a.lex.mattr,mean_word_characters:a.lex.avgLength,repeat_rate:a.lex.repeatRate},
+    syntactic:{mean_sentence_words:a.syntax.meanSentence,sentence_variance:a.syntax.variance,punctuation:a.syntax.punctuation,passive_candidates:a.syntax.passiveCandidates},
+    discourse:{marker_counts:a.syntax.markers,length_bands:a.paragraphs.map(x=>({paragraph_id:x.id,word_count:x.wordCount,band:x.lengthBand,position:x.position}))},
+    recurrent_ngrams:a.active.filter(x=>x.freq>=2&&x.df>=2).slice(0,15).map(x=>({ngram:x.key,frequency:x.freq,paragraph_df:x.df,per_100_tokens:x.rel100})),
+    classifications:safeClassifications,
+    manual_overrides:{...overrides},
+    warnings:a.warnings
+  },
+  provenance:{observed:'corpus measurements',heuristic:'language identification and rhetorical marker rules',manual:'operator-selected classifications and prompt edits',
+   copyright_scope:'No full reference corpus included; small recurrent patterns may be present.',
+   semantic_execution:'NOT IMPLEMENTED',semantic_fidelity:'NOT VERIFIED'}
+ };
+}
+async function clipboardWrite(text,description,mode='prompt'){
+ $('bundleFallbackBox').hidden=true;
+ try{if(!navigator.clipboard?.writeText)throw Error('Clipboard API not available');
+  await navigator.clipboard.writeText(text);status(`${description} disalin ke clipboard.`,'success');return true;
+ }catch(err){
+  const temp=document.createElement('textarea');temp.value=text;temp.setAttribute('aria-hidden','true');
+  temp.style.position='fixed';temp.style.left='-10000px';temp.style.top='0';
+  document.body.appendChild(temp);temp.focus();temp.select();let ok=false;
+  try{ok=!!document.execCommand('copy');}catch(e){}temp.remove();
+  if(ok){status(`${description} disalin melalui fallback.`, 'success');return true;}
+  if(mode==='bundle'){
+   $('bundleFallback').value=text;$('bundleFallbackBox').hidden=false;$('bundleFallback').focus();$('bundleFallback').select();
+  }else {$('promptText').focus();$('promptText').select();}
+  status('Clipboard tidak diizinkan. Konten lengkap diseleksi untuk disalin manual.','warning');return false;
+ }
+}
+function copyText(){return clipboardWrite($('promptText').value,'Prompt lengkap');}
+function copyUnified(){if(!current)return;return clipboardWrite(JSON.stringify(buildUnifiedPayload(),null,2),'Prompt + JSON dalam satu objek','bundle');}
+function exportJSON(){if(!current)return;const payload=buildUnifiedPayload();
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='codomain-preset-'+$('preset').value+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function fixtureTests(){const tests=[],test=(id,condition,detail)=>tests.push({id,pass:!!condition,detail});
+ const A=C.analyze('Dr. Ani berkata: “Café — naïve?!”\n\nNamun, because she stayed, ia tidak pergi.');test('A • token & original offsets',A.doc.tokens.every(t=>A.doc.original.slice(t.start,t.end)===t.raw)&&A.doc.paragraphs.length===2,'Unicode, bilingual, punctuation, 2 paragraphs.');
+ const B=C.analyze('alpha beta gamma.\n\nalpha beta delta.');const ab=B.allBi.find(x=>x.key==='alpha beta');test('B • n-gram accounting',ab?.freq===2&&ab.df===2&&Math.abs(ab.rel100-100*2/6)<0.01,'alpha beta count 2, 2 paragraphs, 33.33/100 tokens');
+ const filt=C.analyze('namun tidak dalam rumah.\n\nnamun tidak dalam kota.',{mode:'filtered',stopList:'id',protect:true});test('C • retained negative/contrast',filt.doc.words.some(w=>w.normalized==='tidak'&&!filt.excluded.has(w.idx))&&filt.marks.some(m=>m.type==='contrast')&&filt.excluded.size>0,'Protected negation and connector remain available');
+ const band=C.frequencyBands([{key:'a',freq:1},{key:'b',freq:1},{key:'c',freq:2},{key:'d',freq:2}],25,75);test('D • frequency tie',Object.values(band.bands).reduce((s,b)=>s+b.types,0)===4&&new Set(Object.values(band.bands).flatMap(b=>b.items.map(x=>x.key))).size===4,'Every unique type assigned exactly once.');
+ const E1=C.analyze('red fox runs.\n\nblue fox sleeps.'),E2=C.analyze('blue fox sleeps.\n\nred fox runs.');test('E • paragraph permutation',JSON.stringify(E1.allBi.map(x=>[x.key,x.freq]))===JSON.stringify(E2.allBi.map(x=>[x.key,x.freq]))&&E1.allBi.find(x=>x.key==='red fox')?.occurrences[0].paragraph!==E2.allBi.find(x=>x.key==='red fox')?.occurrences[0].paragraph,'Same within-paragraph n-grams, relocated positions.');
+ const F1=C.analyze('alpha beta alpha.\n\nalpha gamma.'),F2=C.analyze('alpha beta alpha.\n\nalpha gamma.\n\nalpha beta alpha.\n\nalpha gamma.');test('F • duplication sensitivity',F2.lex.tokens===2*F1.lex.tokens&&F2.lex.ttr<F1.lex.ttr&&F2.allBi.find(x=>x.key==='alpha beta')?.freq===2*F1.allBi.find(x=>x.key==='alpha beta')?.freq,'Counts double; TTR decreases as expected.');
+ const G=C.analyze('Saya pergi.');test('G • insufficient evidence',G.warnings.some(x=>x.includes('Insufficient data'))&&G.lex.mattr===null&&G.syntax.variance===null,'Short text: no MATTR or variance.');
+ const H=C.analyze('Saya setuju.\n\nSaya tidak setuju.');test('H • semantic counterexample',H.profile.temperament.label==='Undetermined'&&!('semanticSimilarity' in H),'No semantic similarity claim or false equivalence.');
+ const I=C.analyze('<img src=x onerror=alert(1)> <scr'+'ipt>alert(2)</scr'+'ipt>');test('I • HTML source safely stored',I.doc.original.includes('<script>')&&escapeHTML(I.doc.original).includes('&lt;script&gt;'),'UI text is escaped; browser scripting test separately required.');
+ return tests;
+}
+function runTests(){const tests=fixtureTests();$('testResults').innerHTML=tests.map(x=>row(x.id,`<strong class="${x.pass?'text-success':'text-danger'}">${x.pass?'PASS':'FAIL'}</strong>`,escapeHTML(x.detail))).join('');$('testSummary').textContent=`${tests.filter(x=>x.pass).length}/${tests.length} automated core assertions PASS. DOM browser security/copy checks require browser-level verification; this internal suite does not test them.`;}
+function clear(){current=null;selected=null;overrides={};promptDrafts.clear();$('bundleFallbackBox').hidden=true;$('corpus').value='';$('targetText').value='';$('promptText').value='';$('results').hidden=true;$('empty').hidden=false;$('fileInput').value='';showCounts();status('Siap menerima korpus.');}
+let debounce;
+function init(){showCounts();showWeights();showThresholdText();$('analyze').addEventListener('click',run);$('clear').addEventListener('click',clear);
+ $('corpus').addEventListener('input',()=>{showCounts();clearTimeout(debounce);if(current)debounce=setTimeout(run,650);});
+ $('fileInput').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;if(!/\.(txt|md)$/i.test(file.name)){status('Hanya .txt atau .md.','danger');return;}if(file.size>1000000){status('File di atas 1 MB tidak diterima.','danger');return;}try{$('corpus').value=await file.text();showCounts();run();}catch(err){status('Gagal membaca file.','danger');}});
+ document.querySelectorAll('[data-config]').forEach(el=>el.addEventListener('change',autoRun));document.querySelectorAll('[data-config="weight"]').forEach(el=>el.addEventListener('input',()=>{showWeights();if(current)renderPreset();}));
+ $('customStop').addEventListener('input',()=>{clearTimeout(debounce);if(current)debounce=setTimeout(run,650);});
+ $('ngramSelect').addEventListener('change',e=>chooseNgram(e.target.value));$('layer').addEventListener('change',renderGraph);$('minEdge').addEventListener('input',()=>{const v=$('minEdge').value;$('minEdgeLabel').textContent=v;if(current)renderGraph();});
+ $('preset').addEventListener('change',renderPreset);$('targetText').addEventListener('input',()=>{clearTimeout(debounce);if(current)debounce=setTimeout(renderPreset,350);});
+ $('copy').addEventListener('click',copyText);$('copyBundle').addEventListener('click',copyUnified);$('resetPreset').addEventListener('click',()=>{promptDrafts.delete($('preset').value);renderPreset();});$('export').addEventListener('click',exportJSON);
+ $('promptText').addEventListener('input',trackDraft);
+ $('tests').addEventListener('click',runTests);$('sample').addEventListener('click',()=>{$('corpus').value='Penelitian ini menunjukkan bahwa perubahan bahasa dapat memengaruhi cara kita membangun argumen. Namun, perubahan tersebut tidak selalu memperbaiki kualitas bukti.\n\nFor example, a writer may use longer sentences because the topic demands greater precision. However, length alone does not establish analytical depth.\n\nOleh karena itu, analisis gaya perlu memisahkan frekuensi, konteks, dan interpretasi. Meskipun pola kontras muncul berulang, posisi argumentatif harus diperiksa melalui kalimat asal.\n\nA careful interpretation relies on textual evidence. Therefore, recurring transitions should be treated as hypotheses rather than proof of authorial intention.';showCounts();run();});
+}
+document.addEventListener('DOMContentLoaded',init);
+})();
+
+</script>
+</body>
+</html>

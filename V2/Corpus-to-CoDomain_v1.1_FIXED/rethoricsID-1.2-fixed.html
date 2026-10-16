@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Runtime Policy Builder v1.2 — focus &amp; clipboard fix</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#111823; --muted:#9fb0c2; --text:#e8eef6;
+      --line:#243244; --accent:#7dd3fc; --bad:#fb7185; --good:#86efac;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#070a0e, var(--bg));color:var(--text);font-family:var(--sans);}
+    .wrap{max-width:1250px;margin:0 auto;padding:20px;}
+    h1{font-size:16px;margin:0 0 10px 0;letter-spacing:.2px}
+    .grid{display:grid;gap:12px;grid-template-columns: 1fr 1.25fr;}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr;}}
+    .card{background:rgba(17,24,35,.92);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);}
+    .row{display:grid;gap:10px;grid-template-columns: 1fr 1fr;}
+    @media (max-width: 640px){.row{grid-template-columns:1fr;}}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    select, textarea, input[type="text"]{
+      width:100%;padding:10px 10px;border-radius:10px;border:1px solid var(--line);
+      background:#0b1220;color:var(--text);outline:none;
+    }
+    select:focus, textarea:focus, input[type="text"]:focus{border-color:rgba(125,211,252,.6);box-shadow:0 0 0 3px rgba(125,211,252,.12);}
+    textarea{min-height:120px;resize:vertical;font-family:var(--mono);font-size:12px;line-height:1.4;}
+    .checks{display:grid;gap:8px;grid-template-columns:1fr 1fr;}
+    @media (max-width: 640px){.checks{grid-template-columns:1fr;}}
+    .check{
+      display:flex;gap:10px;align-items:flex-start;background:#0b1220;border:1px solid var(--line);
+      padding:10px;border-radius:12px;
+    }
+    .check input{margin-top:2px;transform:scale(1.05)}
+    .check .t{font-size:13px}
+    .check .d{font-size:11px;color:var(--muted);margin-top:2px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    button{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      background:#0b1220;color:var(--text);cursor:pointer;
+    }
+    button:hover{border-color:rgba(125,211,252,.55)}
+    button.primary{border-color:rgba(125,211,252,.55);background:rgba(125,211,252,.08)}
+    .small{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+    .outgrid{display:grid;gap:12px;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(200px, auto);}
+    @media (max-width: 980px){.outgrid{grid-template-columns:1fr;}}
+    .out{display:flex;flex-direction:column;gap:8px}
+    .hdr{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .tag{
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--line);background:#0b1220;border-radius:999px;padding:6px 10px;
+      display:inline-flex;gap:8px;align-items:center;
+    }
+    .tag b{color:var(--text);font-weight:600}
+    .tag .ok{color:var(--good)}
+    .tag .no{color:var(--bad)}
+    pre{
+      margin:0;white-space:pre-wrap;word-break:break-word;font-family:var(--mono);
+      font-size:12px;line-height:1.45;background:#070c13;border:1px solid var(--line);
+      border-radius:12px;padding:12px;min-height:220px;flex:1;
+    }
+    .mono{font-family:var(--mono)}
+    .hr{height:1px;background:var(--line);margin:12px 0;}
+    .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#0b1220;border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px}
+    .pill b{color:var(--text)}
+    .phraseGrid{display:grid;gap:8px;grid-template-columns:1fr;}
+    .phraseRow{display:flex;gap:8px;align-items:center}
+    .phraseRow input{flex:1}
+    .tinyBtn{padding:8px 10px;border-radius:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Runtime Policy Engine — Builder (Input / Runtime / Merge) + Exclude + Context/Phrase + Rhetoric + Addendum Humanize</h1>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card">
+        <div class="row">
+          <div>
+            <label for="audience">audience</label>
+            <select id="audience">
+              <option value="specialist">specialist</option>
+              <option value="non_specialist">non_specialist</option>
+              <option value="mixed" selected>mixed</option>
+              <option value="public">public</option>
+            </select>
+          </div>
+          <div>
+            <label for="text_function">text_function</label>
+            <select id="text_function">
+              <option value="exploratory" selected>exploratory</option>
+              <option value="assertive">assertive</option>
+              <option value="corrective">corrective</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label for="stakes">stakes</label>
+            <select id="stakes">
+              <option value="low">low</option>
+              <option value="medium" selected>medium</option>
+              <option value="high">high</option>
+            </select>
+          </div>
+          <div>
+            <label>goals (multi-centang)</label>
+            <div class="checks" id="goals"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label>signals (boolean)</label>
+          <div class="checks" id="signals"></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <div>
+            <label for="topK">Top-K kata (freq)</label>
+            <select id="topK">
+              <option value="6">6</option>
+              <option value="8" selected>8</option>
+              <option value="12">12</option>
+              <option value="16">16</option>
+              <option value="24">24</option>
+              <option value="32">32</option>
+            </select>
+          </div>
+          <div>
+            <label for="topP">Top frase (ngram 2–5)</label>
+            <select id="topP">
+              <option value="6">6</option>
+              <option value="8" selected>8</option>
+              <option value="12">12</option>
+              <option value="16">16</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label>opsi analisis</label>
+            <div class="checks">
+              <div class="check">
+                <input type="checkbox" id="includeStopwords"/>
+                <div>
+                  <div class="t"><b>include_stopwords</b></div>
+                  <div class="d">Kata fungsi (yang/dan/di/ke...) ikut hitung. Biasanya bikin top-k kurang “bermakna logis”.</div>
+                </div>
+              </div>
+              <div class="check">
+                <input type="checkbox" id="postExclude" checked/>
+                <div>
+                  <div class="t"><b>post_exclude</b></div>
+                  <div class="d">Setelah dihitung, item yang di-exclude <u>dibuang</u> tanpa “backfill” (jadi list boleh lebih pendek).</div>
+                </div>
+              </div>
+              <div class="check">
+                <input type="checkbox" id="extractContext" checked/>
+                <div>
+                  <div class="t"><b>extract_context</b></div>
+                  <div class="d">Untuk tiap kata top, ambil pola lanjutan paling sering: “kata + 1..4 token berikutnya”.</div>
+                </div>
+              </div>
+              <div class="check">
+                <input type="checkbox" id="extractNgrams" checked/>
+                <div>
+                  <div class="t"><b>extract_phrases</b></div>
+                  <div class="d">Cari frasa khas (n-gram 2–5) paling sering. Bagus untuk “jika dan hanya jika” dsb.</div>
+                </div>
+              </div>
+              <div class="check">
+                <input type="checkbox" id="guardSize" checked/>
+                <div>
+                  <div class="t"><b>guard_size</b></div>
+                  <div class="d">Menjaga Runtime stabil: cap top-k/top-frasa/konteks supaya Merge &lt; 10000.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label>exclude (token/frasa)</label>
+            <textarea id="excludeTerms" placeholder="Satu per baris atau dipisah koma. Contoh:
+yang, dan, di
+jika
+dengan demikian"></textarea>
+            <div class="small">
+              Exclude berlaku untuk <b>kata</b> dan juga <b>ngram</b> bila ada token yang di-exclude.<br/>
+              Gunakan <span class="mono">post_exclude</span> bila kamu ingin “buang saja” tanpa menambah item baru.
+            </div>
+            <textarea id="excludePhrases" style="margin-top:8px;" placeholder="(Opsional) Exclude frasa persis (substring match), satu per baris.
+Contoh:
+jika dan hanya jika
+bukan hanya"></textarea>
+            <div class="small">
+              Exclude frasa persis bekerja sebagai filter tambahan untuk output frasa (ngram &amp; custom phrases).
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div>
+          <div class="pill"><b>Retorika unik</b> <span>— input frasa (maks 20), auto-tambah kolom saat kamu isi</span></div>
+          <div class="small">
+            Ini untuk “tanda tangan” retoris: kamu input frasa/pola khas, lalu Runtime akan:
+            (a) menyimpan daftar itu, (b) menghitung kemunculannya di sample text, (c) memetakan penempatan via Addendum.
+          </div>
+
+          <div id="phraseBox" class="phraseGrid" style="margin-top:10px;"></div>
+          <div class="btns" style="margin-top:8px;">
+            <button class="tinyBtn" id="addPhrase">+ Tambah frasa</button>
+            <button class="tinyBtn" id="clearPhrases">Bersihkan frasa</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <div>
+            <label for="humanizeMode">Addendum Humanize — mode</label>
+            <select id="humanizeMode">
+              <option value="none" selected>none (formal/scopus-oriented)</option>
+              <option value="subtle">subtle (sedikit estetika, tetap akademik)</option>
+              <option value="strong">strong (aestetik-retoris kuat)</option>
+            </select>
+
+            <label for="humanizePreset" style="margin-top:10px;">preset vibe/genre</label>
+            <select id="humanizePreset">
+              <option value="formal_academic" selected>Formal Academic (netral)</option>
+              <option value="dark_satirical_realism">Indonesian Dark-Satirical Realism</option>
+              <option value="poetic_phenomenology">Poetic-Phenomenological</option>
+              <option value="polemic_structural_satire">Polemic / Structural Satire</option>
+              <option value="existential_diagnostic">Cynical-Existential / Diagnostic</option>
+              <option value="custom">Custom (isi manual)</option>
+            </select>
+
+            <div class="small">
+              <b>Panduan cepat:</b><br/>
+              - <span class="mono">none</span>: aman untuk jurnal ketat; estetika minimum.<br/>
+              - <span class="mono">subtle</span>: cocok untuk esai akademik yang tetap “bernyawa”.<br/>
+              - <span class="mono">strong</span>: cocok untuk opini/essay publik/polemik.
+            </div>
+          </div>
+
+          <div>
+            <label>parameter (boleh kosong jika preset cukup)</label>
+            <input id="hzGenre" type="text" placeholder="genre_spesifik (mis. Indonesian Dark-Satirical Realism)" />
+            <input id="hzVibe" type="text" style="margin-top:8px" placeholder="vibe_dominan (mis. Cynical-Existential / Absurdist)" />
+            <input id="hzEmotion" type="text" style="margin-top:8px" placeholder="spektrum_emosi (mis. Brutally Honest, Darkly Ironic)" />
+            <input id="hzDevice" type="text" style="margin-top:8px" placeholder="pola_retorika (mis. satire struktural sakral vs profan)" />
+            <input id="hzSharp" type="text" style="margin-top:8px" placeholder="tingkat_ketajaman (mis. lethal irony / medium / low)" />
+            <div class="small">
+              Kalau bingung isi custom: biarkan kosong dan pakai preset. Runtime akan mengisi “default aman”.
+            </div>
+
+            <label for="placement" style="margin-top:10px;">penempatan addendum di M1–M7</label>
+            <select id="placement">
+              <option value="none" selected>none (tidak disuntikkan)</option>
+              <option value="M1">M1 (problem framing)</option>
+              <option value="M1M2">M1–M2 (awal + komitmen)</option>
+              <option value="M5">M5 (analytical core / critique)</option>
+              <option value="M6">M6 (implikasi)</option>
+              <option value="M7">M7 (penutup)</option>
+              <option value="appendix">Appendix / catatan akhir</option>
+              <option value="sprinkle">Sprinkle (ringan di transisi)</option>
+            </select>
+
+            <label for="delayRule" style="margin-top:8px;">kapan ditahan (delay)</label>
+            <select id="delayRule">
+              <option value="none" selected>none</option>
+              <option value="until_M5">tahan sampai M5</option>
+              <option value="until_M6">tahan sampai M6</option>
+              <option value="only_if_low_medium">hanya jika stakes low/medium</option>
+            </select>
+
+            <div class="small">
+              <b>Kepantasan singkat:</b><br/>
+              - M1: “hook estetika” boleh, tapi jangan menutup definisi problem.<br/>
+              - M5: paling aman untuk satire/diagnostik (karena sudah ada data/argumen).<br/>
+              - M6/M7: cocok untuk resonansi moral/puitik tanpa merusak metode.<br/>
+              - Appendix: aman untuk jurnal ketat.
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div>
+          <label for="sampleText">sample text (opsional, untuk frekuensi kata/marker/konteks)</label>
+          <textarea id="sampleText" placeholder="Tempel 1–5 paragraf tulisanmu di sini. Runtime hanya menyimpan statistik (bukan teks mentah)."></textarea>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="copyMerge">Copy Merge</button>
+          <button id="copyInput">Copy Input</button>
+          <button id="copyRuntime">Copy Runtime</button>
+          <button id="reset">Reset</button>
+        </div><div id="copyStatus" class="small" role="status" aria-live="polite"></div><textarea id="copyFallback" hidden readonly aria-label="Manually copy payload"></textarea>
+
+        <div class="small">
+          <span class="mono">Input</span> = parameter pilihanmu. <span class="mono">Runtime</span> = signature + rules + outputs + statistik.<br/>
+          Merge siap copy ke RAG: <span class="mono">{"rewrite_engine_run": {"Input":..., "Runtime":...}}</span>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card">
+        <div class="outgrid">
+          <div class="out">
+            <div class="hdr">
+              <label>Input</label>
+              <span class="tag">chars: <b id="cInput">0</b></span>
+            </div>
+            <pre id="outInput"></pre>
+          </div>
+
+          <div class="out">
+            <div class="hdr">
+              <label>Runtime</label>
+              <span class="tag">
+                chars: <b id="cRuntime">0</b>
+                <span id="runtimeOk"></span>
+              </span>
+            </div>
+            <pre id="outRuntime"></pre>
+          </div>
+
+          <div class="out" style="grid-column:1 / -1;">
+            <div class="hdr">
+              <label>Merge (Input + Runtime)</label>
+              <span class="tag">
+                total chars: <b id="cMerge">0</b>
+                <span id="mergeOk"></span>
+              </span>
+            </div>
+            <pre id="outMerge"></pre>
+          </div>
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+          <b>Interpretasi cepat output baru:</b><br/>
+          - <span class="mono">runtime_outputs.freq.top</span>: top-k kata (setelah stopwords/exclude).<br/>
+          - <span class="mono">runtime_outputs.freq.ctx</span>: konteks lanjutan paling sering untuk tiap kata top (“w + next tokens”).<br/>
+          - <span class="mono">runtime_outputs.freq.ng</span>: top frasa n-gram 2–5 (cocok untuk “jika dan hanya jika”).<br/>
+          - <span class="mono">runtime_outputs.rhet.custom</span>: frasa retorika unik + hitungan kemunculan.<br/>
+          - <span class="mono">runtime_outputs.hum</span>: Addendum Humanize + penempatan M1–M7 + rule delay.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ---------------------------
+  // Options + help
+  // ---------------------------
+  const GOAL_OPTIONS = [
+    { id: "auditability", desc: "Bisa diaudit: transisi/konsekuensi dapat ditelusuri (biasanya enforce marker inti)." },
+    { id: "reader_disorientation", desc: "Disorientasi strategis: marker ditekan, definisi ditunda (hanya jika stakes≠high)." },
+    { id: "accessibility", desc: "Lebih ramah pembaca: signposting, contoh, micro-summary." },
+    { id: "maximum_precision", desc: "Presisi maksimal: densitas konseptual ditoleransi, resolusi bisa ditahan." },
+    { id: "replication_safety", desc: "Aman replikasi: ambiguitas ditekan khususnya di metode/replication." }
+  ];
+
+  const SIGNAL_OPTIONS = [
+    { id: "high_theoretical_overlap", desc: "Teori tumpang tindih → merge (M2+M3 / M3+M5) untuk kurangi repetisi." },
+    { id: "conceptual_instability_detected", desc: "Konsep belum stabil → tunda resolusi (M6) agar tidak menutup frame terlalu cepat." },
+    { id: "overcompression_detected", desc: "Terlalu padat → wajib tambah anchor sentence atau contoh/case." },
+    { id: "method_section", desc: "Metode → ambiguitas tidak produktif (definisi eksplisit + anchor)." },
+    { id: "replication_context", desc: "Replikasi → definisi eksplisit + anchor wajib." },
+    { id: "polemical_flow", desc: "Polemik → marker bisa dikurangi untuk menjaga tensi (kecuali stakes=high)." },
+    { id: "resolution_would_prematurely_close_frame", desc: "Resolusi menutup frame → boleh resolusi parsial/implisit." }
+  ];
+
+  const PRESET_HUM = {
+    formal_academic: {
+      genre: "Formal Academic",
+      vibe: "Neutral / Audit-oriented",
+      emotion: "Clear, precise, low-flourish",
+      device: "Minimal rhetorical devices; signposting first",
+      sharp: "low"
+    },
+    dark_satirical_realism: {
+      genre: "Indonesian Dark-Satirical Realism",
+      vibe: "Cynical-Existential / Macabre Political Philosophy",
+      emotion: "Brutally honest, darkly ironic, absurdist",
+      device: "Structural satire: sacred vs profane juxtaposition",
+      sharp: "lethal"
+    },
+    poetic_phenomenology: {
+      genre: "Poetic-Phenomenological",
+      vibe: "Tender diagnostic / reflective",
+      emotion: "Lucid, contemplative, controlled intensity",
+      device: "Image + conceptual hinge at transitions",
+      sharp: "medium"
+    },
+    polemic_structural_satire: {
+      genre: "Polemic / Structural Satire",
+      vibe: "Sharp critical polemic",
+      emotion: "Ironic, confrontational, exposing",
+      device: "Expose false binaries via profane contrast",
+      sharp: "high"
+    },
+    existential_diagnostic: {
+      genre: "Existential-Diagnostic",
+      vibe: "Cynical-Existential / diagnostic critique",
+      emotion: "Bleak clarity, unsparing diagnosis",
+      device: "Mechanism-first + moral residue at the end",
+      sharp: "high"
+    }
+  };
+
+  function buildChecks(containerId, items, defaultOnIds = []) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = "";
+    items.forEach(item => {
+      const wrap = document.createElement("div");
+      wrap.className = "check";
+      wrap.innerHTML = `
+        <input type="checkbox" id="${containerId}_${item.id}" ${defaultOnIds.includes(item.id) ? "checked" : ""}/>
+        <div>
+          <div class="t"><b>${item.id}</b></div>
+          <div class="d">${item.desc}</div>
+        </div>
+      `;
+      el.appendChild(wrap);
+    });
+  }
+
+  buildChecks("goals", GOAL_OPTIONS, ["auditability"]);
+  buildChecks("signals", SIGNAL_OPTIONS, ["conceptual_instability_detected"]);
+
+  // ---------------------------
+  // Dynamic rhetoric phrase inputs (max 20)
+  // ---------------------------
+  const MAX_PHRASES = 20;
+  let phraseValues = Array(MAX_PHRASES).fill("");
+
+  function renderPhraseInputs() {
+    const box = document.getElementById("phraseBox");
+    box.innerHTML = "";
+    const filledUpTo = (() => {
+      let last = 0;
+      for (let i=0;i<MAX_PHRASES;i++){
+        if ((phraseValues[i]||"").trim() !== "") last = i+1;
+      }
+      return Math.min(Math.max(last + 1, 1), MAX_PHRASES); // show next slot
+    })();
+
+    for (let i=0;i<filledUpTo;i++){
+      const row = document.createElement("div");
+      row.className = "phraseRow";
+      row.innerHTML = `
+        <input type="text" id="ph_${i}" placeholder="Frasa ${i+1} (contoh: Dunia bertindak lebih dulu daripada sempat dimaknai)" />
+        <button class="tinyBtn" id="rm_${i}" title="hapus frasa ini">✕</button>
+      `;
+      box.appendChild(row);
+
+      const inp = row.querySelector(`#ph_${i}`);
+      inp.value = phraseValues[i];
+      inp.addEventListener("input", (e)=>{
+        phraseValues[i] = e.target.value;
+        // Only expand when the final visible slot first receives content.
+        // Recreating inputs on every keystroke destroys focus and IME composition.
+        const lastVisible = box.querySelectorAll('.phraseRow').length - 1;
+        if (i === lastVisible && phraseValues[i].trim() && i < MAX_PHRASES - 1 && !e.isComposing) {
+          const start = e.target.selectionStart, end = e.target.selectionEnd;
+          renderPhraseInputs();
+          const restored = document.getElementById(`ph_${i}`);
+          if(restored){restored.focus();restored.setSelectionRange(start,end);}
+        }
+        render();
+      });
+
+      const rm = row.querySelector(`#rm_${i}`);
+      rm.addEventListener("click", ()=>{
+        phraseValues[i] = "";
+        // compact shift: pull up later phrases
+        const compacted = phraseValues.filter(v => (v||"").trim() !== "");
+        phraseValues = compacted.concat(Array(MAX_PHRASES-compacted.length).fill(""));
+        renderPhraseInputs();
+        render();
+      });
+    }
+  }
+
+  document.getElementById("addPhrase").addEventListener("click", ()=>{
+    // force open one more slot by simulating filledUpTo increment:
+    // easiest: put a space in next empty then remove; but better: just render (already shows next).
+    renderPhraseInputs();
+  });
+
+  document.getElementById("clearPhrases").addEventListener("click", ()=>{
+    phraseValues = Array(MAX_PHRASES).fill("");
+    renderPhraseInputs();
+    render();
+  });
+
+  renderPhraseInputs();
+
+  // ---------------------------
+  // Helpers
+  // ---------------------------
+  const STOPWORDS_ID = new Set([
+    "yang","dan","di","ke","dari","pada","dengan","untuk","sebagai","atau","itu","ini","saya","kita","anda",
+    "dalam","bahwa","jika","karena","agar","maka","juga","lebih","lagi","tidak","bukan","pun","para","oleh",
+    "tersebut","sebuah","atas","sudah","telah","akan","dapat","bisa","hanya","sekadar","jadi","ketika"
+  ]);
+
+  function getCheckedIds(containerId, items) {
+    return items
+      .filter(item => document.getElementById(`${containerId}_${item.id}`).checked)
+      .map(item => item.id);
+  }
+
+  function getSignalsObject() {
+    const obj = {};
+    SIGNAL_OPTIONS.forEach(s => {
+      obj[s.id] = document.getElementById(`signals_${s.id}`).checked;
+    });
+    return obj;
+  }
+
+  function pretty(obj) {
+    return JSON.stringify(obj, null, 2);
+  }
+
+  async function copyText(text) {
+    try {
+      if(!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+      await navigator.clipboard.writeText(text);
+      document.getElementById('copyStatus').textContent = 'Payload copied.';
+    } catch(error) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);ta.focus();ta.select();
+      let copied=false;
+      try {copied=!!document.execCommand('copy');} catch(_) {}
+      ta.remove();
+      if(copied){document.getElementById('copyStatus').textContent = 'Payload copied via fallback.';return;}
+      const preview=document.getElementById('copyFallback');
+      preview.hidden=false;preview.value=text;preview.focus();preview.select();
+      document.getElementById('copyStatus').textContent = 'Clipboard blocked; select and manually copy the payload below.';
+    }
+  }
+
+  function charCount(str) {
+    return (str || "").length;
+  }
+
+  function countOccurrences(haystackLower, needleLower) {
+    if (!needleLower) return 0;
+    let idx = 0, c = 0;
+    while (true) {
+      idx = haystackLower.indexOf(needleLower, idx);
+      if (idx === -1) break;
+      c++;
+      idx += needleLower.length;
+    }
+    return c;
+  }
+
+  function tokenizeID(text) {
+    const lower = (text || "").toLowerCase();
+    // keep hyphens; remove other punctuation
+    const cleaned = lower.replace(/[^\p{L}\p{N}\s\-]+/gu, " ");
+    return cleaned.split(/\s+/).filter(Boolean);
+  }
+
+  function sentenceSplit(text) {
+    const t = (text || "").trim();
+    if (!t) return [];
+    return t.split(/[.!?]+/).map(s => s.trim()).filter(Boolean);
+  }
+
+  function parseList(text) {
+    return (text || "")
+      .split(/[\n,]+/g)
+      .map(s => s.trim().toLowerCase())
+      .filter(Boolean);
+  }
+
+  function isExcludedToken(tok, excludeSet) {
+    return excludeSet.has(tok);
+  }
+
+  function countPhraseInTokens(tokens, phraseTokens) {
+    if (!phraseTokens.length) return 0;
+    let c = 0;
+    for (let i=0;i<=tokens.length-phraseTokens.length;i++){
+      let ok = true;
+      for (let j=0;j<phraseTokens.length;j++){
+        if (tokens[i+j] !== phraseTokens[j]) { ok = false; break; }
+      }
+      if (ok) c++;
+    }
+    return c;
+  }
+
+  // ---------------------------
+  // Runtime skeleton — compact but rich
+  // ---------------------------
+  function buildRuntimeSkeleton() {
+    return {
+      "rewrite_engine": {
+        "Runtime": {
+          "meta": {
+            "n": "RewriteEngine_ID_Integrated",
+            "v": "2.2.0",
+            "lang": "id",
+            "at": "2026-01-26+07:00",
+            "prec": ["idio","rhet","kernel","rt","acad"],
+            "legend": {
+              "sig": "signals",
+              "amb": "ambiguity",
+              "tok": "token_count",
+              "sent": "sentence_count",
+              "ctx": "context (w + next tokens)",
+              "ng": "ngram 2–5",
+              "xcl": "excluded"
+            }
+          },
+          "profile": { "orient":"analitis-kritis","risk":"precision>access","reader":"theory_lit","amb":"high" },
+          "macro": {
+            "idio": ["Phenomenal","Onto-epist","Displace","Cond-practice"],
+            "M": ["M1","M2","M3","M4","M5","M6","M7"],
+            "map": [["Phenomenal",["M1"]],["Onto-epist",["M2","M3"]],["Displace",["M5"]],["Cond-practice",["M6","M7"],"M6 delay/implicit"]]
+          },
+          "style": {
+            "syntax": { "mean":22,"max":40,"sub":[1,3],"contrast":[1,2], "reg":{"over":["anchor","case"],"disorient":["drop_markers","delay_def"]}},
+            "lex": {
+              "markers":["namun","meskipun","sebaliknya","lebih lagi","dengan demikian"],
+              "mod_hi":["sejauh mana","dalam kondisi apa","apa implikasinya jika","apa syaratnya"],
+              "neg":["bukan X melainkan Y","tidak sekadar X"],
+              "dual":["X-keter-X-an"]
+            },
+            "moves":["conceptual_inversion","assumption_exposure","frame_displacement"],
+            "omit":["full_resolution","didactic_closure"]
+          },
+          "policy": {
+            "kernel": { "merge":["M2+M3","M3+M5"],"delay":"suppress_M6","omit":["partial_M6","implicit_practice"] },
+            "rhet": { "enf":["dengan demikian"],"sup":["dengan demikian","oleh karena itu"],"amb_prod":["delay_def","stack_conds"],"amb_unprod":["anchor","explicit_terms"] },
+            "rt": {
+              "rules":[
+                ["R1",{ "stakes":"high" },{ "enforce":"audit","no_disorient":1 }],
+                ["R2",{ "sig.instability":1 },{ "do":"delay_M6" }],
+                ["R3",{ "sig.overlap":1 },{ "do":"merge" }],
+                ["R4",{ "sig.overcompress":1 },{ "do":"add_anchor_or_case" }],
+                ["R5",{ "goal.disorient":1,"stakes_not":"high" },{ "do":"suppress_markers+delay_def" }],
+                ["R6",{ "sig.method_or_repl":1 },{ "do":"explicit_defs+anchor" }],
+                ["R8",{ "sig.premature_close":1 },{ "do":"allow_implicit_resolution" }]
+              ],
+              "checks":["M1–M7 unless merged","stakes=high -> marker in resolution","method/repl -> explicit defs + anchor"]
+            }
+          },
+          "runtime_outputs": {
+            "active": [],
+            "plan": { "merge": [], "suppress": [], "implicit_res": 0 },
+            "markers": { "enforce": [], "suppress": [] },
+            "amb": { "mode": "default", "act": [] },
+
+            "xcl": { "terms": [], "phrases": [], "post": 1 },
+
+            "stats": { "tok": 0, "sent": 0, "tps": 0, "hyphen_terms": [] },
+            "freq": {
+              "top": [],
+              "ctx": {},     // word -> [ [phrase,count], ... ]
+              "ng": [],      // [ [ngram,count], ... ]
+              "m": {},       // marker counts
+              "mod": {}      // modality counts
+            },
+
+            "rhet": {
+              "custom": { "phrases": [], "counts": [] }
+            },
+
+            "hum": {
+              "mode": "none",
+              "preset": "formal_academic",
+              "meta_est": { "era":"unknown", "genre":"", "vibe":"" },
+              "sig_ai": { "emo":"", "device":"", "sharp":"" },
+              "placement": { "where":"none", "delay":"none" }
+            }
+          }
+        }
+      }
+    };
+  }
+
+  // ---------------------------
+  // Fill addendum humanize
+  // ---------------------------
+  function buildHumanize(inputs) {
+    const mode = inputs.humanizeMode;
+    const preset = inputs.humanizePreset;
+
+    let base = PRESET_HUM[preset] || PRESET_HUM.formal_academic;
+
+    // if preset custom, keep base formal unless user writes
+    if (preset === "custom") base = PRESET_HUM.formal_academic;
+
+    const genre = inputs.hzGenre.trim() || base.genre;
+    const vibe  = inputs.hzVibe.trim() || base.vibe;
+    const emo   = inputs.hzEmotion.trim() || base.emotion;
+    const device= inputs.hzDevice.trim() || base.device;
+    const sharp = inputs.hzSharp.trim() || base.sharp;
+
+    // conservative override: if mode none, dampen
+    const damp = (mode === "none");
+    return {
+      mode,
+      preset,
+      meta_est: {
+        era: "unknown",
+        genre: damp ? "Formal Academic" : genre,
+        vibe:  damp ? "Neutral / Audit-oriented" : vibe
+      },
+      sig_ai: {
+        emo:    damp ? "Clear, precise, low-flourish" : emo,
+        device: damp ? "Minimal rhetorical devices; signposting first" : device,
+        sharp:  damp ? "low" : sharp
+      },
+      placement: {
+        where: inputs.placement,
+        delay: inputs.delayRule
+      }
+    };
+  }
+
+  // ---------------------------
+  // Evaluate Runtime (rules + freq + context + ngrams + custom rhetoric)
+  // ---------------------------
+  function evaluateRuntime(runtimeObj, inputs) {
+    const goals = new Set(inputs.goals || []);
+    const s = inputs.signals || {};
+    const stakes = inputs.stakes;
+
+    const ro = runtimeObj.rewrite_engine.Runtime.runtime_outputs;
+
+    // reset outputs
+    ro.active = [];
+    ro.plan = { merge: [], suppress: [], implicit_res: 0 };
+    ro.markers = { enforce: [], suppress: [] };
+    ro.amb = { mode: "default", act: [] };
+
+    // exclude info
+    ro.xcl = { terms: inputs.excludeTerms.slice(0, 40), phrases: inputs.excludePhrases.slice(0, 20), post: inputs.postExclude ? 1 : 0 };
+
+    // humanize
+    ro.hum = buildHumanize(inputs);
+
+    // --- policy rules ---
+    if (stakes === "high") {
+      ro.active.push("R1");
+      ro.markers.enforce.push("dengan demikian");
+      ro.amb.mode = "regulated";
+    }
+    if (s.conceptual_instability_detected === true) {
+      ro.active.push("R2");
+      ro.plan.suppress.push("M6");
+    }
+    if (s.high_theoretical_overlap === true) {
+      ro.active.push("R3");
+      ro.plan.merge.push("M2+M3");
+    }
+    if (s.overcompression_detected === true) {
+      ro.active.push("R4");
+      ro.amb.act.push("anchor", "case");
+    }
+    if (goals.has("reader_disorientation") && stakes !== "high") {
+      ro.active.push("R5");
+      ro.markers.suppress.push("dengan demikian", "oleh karena itu");
+      ro.amb.mode = "reader_disorientation";
+      ro.amb.act.push("drop_markers", "delay_def");
+    }
+    if (s.method_section === true || s.replication_context === true) {
+      ro.active.push("R6");
+      ro.amb.mode = "unproductive_ambiguity_blocked";
+      ro.amb.act.push("anchor", "explicit_terms");
+      if (goals.has("auditability")) ro.markers.enforce.push("dengan demikian");
+    }
+    if (s.resolution_would_prematurely_close_frame === true) {
+      ro.active.push("R8");
+      ro.plan.implicit_res = 1;
+    }
+
+    // dedupe
+    ro.active = [...new Set(ro.active)];
+    ro.plan.merge = [...new Set(ro.plan.merge)];
+    ro.plan.suppress = [...new Set(ro.plan.suppress)];
+    ro.markers.enforce = [...new Set(ro.markers.enforce)];
+    ro.markers.suppress = [...new Set(ro.markers.suppress)];
+    ro.amb.act = [...new Set(ro.amb.act)];
+
+    // --- frequency analysis from sample text ---
+    const rawText = inputs.sampleText || "";
+    const lower = rawText.toLowerCase().trim();
+    const guard = inputs.guardSize === true;
+
+    // custom rhetoric phrases
+    const customPhrases = inputs.customPhrases.slice(0, 20);
+    ro.rhet.custom.phrases = customPhrases;
+
+    // If no text, keep freq empty but still count custom as 0
+    ro.rhet.custom.counts = customPhrases.map(p => [p, 0]);
+
+    ro.stats = { tok: 0, sent: 0, tps: 0, hyphen_terms: [] };
+    ro.freq = { top: [], ctx: {}, ng: [], m: {}, mod: {} };
+
+    if (!lower.length) return;
+
+    const tokensAll = tokenizeID(rawText);
+    const sentenceTokens = sentenceSplit(rawText).map(tokenizeID);
+    // Only count phrases found contiguously within an actual sentence segment.
+    const countInSentences = phrase => sentenceTokens.reduce((sum,unit)=>sum+countPhraseInTokens(unit,phrase),0);
+
+    // exclude sets
+    const excludeSet = new Set(inputs.excludeTerms);
+    const excludePhraseList = inputs.excludePhrases;
+
+    // apply token-level exclude early for counts
+    const tokens = tokensAll.filter(t => !isExcludedToken(t, excludeSet));
+
+    const sentences = sentenceSplit(rawText);
+
+    ro.stats.tok = tokens.length;
+    ro.stats.sent = sentences.length;
+    ro.stats.tps = sentences.length ? Math.round((tokens.length / sentences.length) * 10) / 10 : 0;
+
+    // hyphen terms (unique)
+    const hy = new Set();
+    for (const t of tokens) if (t.includes("-") && t.length >= 3) hy.add(t);
+    ro.stats.hyphen_terms = [...hy].slice(0, guard ? 20 : 60);
+
+    // marker counts (from raw lower, not token-filtered)
+    const markerList = ["namun","meskipun","sebaliknya","lebih lagi","dengan demikian","oleh karena itu"];
+    const mc = {};
+    markerList.forEach(m => mc[m] = countInSentences(tokenizeID(m)));
+    ro.freq.m = mc;
+
+    // modality phrase counts
+    const modList = ["sejauh mana","dalam kondisi apa","apa implikasinya jika","apa syaratnya"];
+    const pc = {};
+    modList.forEach(p => pc[p] = countInSentences(tokenizeID(p)));
+    ro.freq.mod = pc;
+
+    // word freq
+    const includeStop = inputs.includeStopwords === true;
+    const freq = new Map();
+    (inputs.postExclude ? tokensAll : tokens).forEach(t => {
+      const w = t.replace(/^-+|-+$/g, "");
+      if (!w) return;
+      if (!includeStop && STOPWORDS_ID.has(w)) return;
+      if (w.length < 3 && w !== "ai") return;
+      freq.set(w, (freq.get(w) || 0) + 1);
+    });
+
+    const topK = inputs.topK || 8;
+    const capK = guard ? Math.min(topK, 32) : topK;
+
+    let top = [...freq.entries()]
+      .sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0]))
+      .map(([w,c]) => [w, c]);
+
+    // post-exclude behavior:
+    // - if postExclude true: compute topK before exclusions, then remove excluded terms without backfill.
+    // - if postExclude false: exclude already applied and we backfill naturally to K (default behavior of slice).
+    if (inputs.postExclude) {
+      top = top.slice(0, capK).filter(([w,_]) => !excludeSet.has(w));
+    } else {
+      top = top.filter(([w,_]) => !excludeSet.has(w)).slice(0, capK);
+    }
+
+    ro.freq.top = top;
+
+    // context extraction: for each top word (cap)
+    if (inputs.extractContext) {
+      const ctxCapWords = guard ? Math.min(ro.freq.top.length, 10) : ro.freq.top.length;
+      const maxNext = 4;
+      const perWordCap = guard ? 4 : 10;
+
+      for (let wi=0; wi<ctxCapWords; wi++) {
+        const w = ro.freq.top[wi][0];
+        const map = new Map();
+        for(const unit of sentenceTokens){
+          for(let i=0;i<unit.length;i++){
+            if(unit[i] !== w)continue;
+            for(let n=1;n<=maxNext;n++){
+              if(i+n>=unit.length)break;
+              const phrase=unit.slice(i,i+n+1);
+              if(phrase.some(t=>excludeSet.has(t)))continue;
+              const ph=phrase.join(' ');
+              map.set(ph,(map.get(ph)||0)+1);
+            }
+          }
+        }
+        const arr = [...map.entries()]
+          .sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0]))
+          .slice(0, perWordCap)
+          .filter(([ph,_]) => !excludePhraseList.includes(ph)); // phrase-level exclude exact
+        ro.freq.ctx[w] = arr.map(([ph,c]) => [ph, c]);
+      }
+    }
+
+    // ngram extraction 2..5
+    if (inputs.extractNgrams) {
+      const nMin = 2, nMax = 5;
+      const nmap = new Map();
+      for (let n=nMin;n<=nMax;n++){
+        for(const unit of sentenceTokens){
+          for (let i=0;i<=unit.length-n;i++){
+            const seg = unit.slice(i,i+n);
+            if(seg.some(t=>excludeSet.has(t)))continue;
+            const phrase=seg.join(' ');
+            nmap.set(phrase,(nmap.get(phrase)||0)+1);
+          }
+        }
+      }
+
+      const topP = inputs.topP || 8;
+      const capP = guard ? Math.min(topP, 16) : topP;
+
+      const ranked = [...nmap.entries()]
+        .sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0]));
+      const chosen = inputs.postExclude
+        ? ranked.slice(0,capP).filter(([ph,_])=>!excludePhraseList.includes(ph))
+        : ranked.filter(([ph,_])=>!excludePhraseList.includes(ph)).slice(0,capP);
+      ro.freq.ng = chosen.map(([ph,c])=>[ph,c]);
+    }
+
+    // custom rhetoric phrase counts (token-based match)
+    const counts = [];
+    for (const p of customPhrases) {
+      const pt = tokenizeID(p);
+      const c = pt.length ? countInSentences(pt) : 0; // raw sentence words: preserve excluded cue evidence
+      counts.push([p, c]);
+    }
+    // apply phrase exclude
+    ro.rhet.custom.counts = counts.filter(([p,_]) => !excludePhraseList.includes(p)).slice(0, guard ? 20 : 50);
+  }
+
+  // ---------------------------
+  // Collect Inputs
+  // ---------------------------
+  function collectInputs() {
+    const excludeTerms = parseList(document.getElementById("excludeTerms").value);
+    const excludePhrases = (document.getElementById("excludePhrases").value || "")
+      .split(/\n+/g).map(s=>s.trim().toLowerCase()).filter(Boolean);
+
+    // humanize preset auto-fill if not custom
+    const preset = document.getElementById("humanizePreset").value;
+    if (preset !== "custom") {
+      const p = PRESET_HUM[preset];
+      if (p) {
+        // only fill if user hasn't typed anything (non-destructive)
+        const g = document.getElementById("hzGenre");  if (!g.value.trim()) g.value = p.genre;
+        const v = document.getElementById("hzVibe");   if (!v.value.trim()) v.value = p.vibe;
+        const e = document.getElementById("hzEmotion");if (!e.value.trim()) e.value = p.emotion;
+        const d = document.getElementById("hzDevice"); if (!d.value.trim()) d.value = p.device;
+        const s = document.getElementById("hzSharp");  if (!s.value.trim()) s.value = p.sharp;
+      }
+    }
+
+    return {
+      audience: document.getElementById("audience").value,
+      text_function: document.getElementById("text_function").value,
+      stakes: document.getElementById("stakes").value,
+      goals: getCheckedIds("goals", GOAL_OPTIONS),
+      signals: getSignalsObject(),
+
+      topK: parseInt(document.getElementById("topK").value, 10),
+      topP: parseInt(document.getElementById("topP").value, 10),
+      includeStopwords: document.getElementById("includeStopwords").checked,
+      postExclude: document.getElementById("postExclude").checked,
+      extractContext: document.getElementById("extractContext").checked,
+      extractNgrams: document.getElementById("extractNgrams").checked,
+      guardSize: document.getElementById("guardSize").checked,
+
+      excludeTerms,
+      excludePhrases,
+
+      customPhrases: phraseValues.map(s=> (s||"").trim()).filter(Boolean),
+
+      humanizeMode: document.getElementById("humanizeMode").value,
+      humanizePreset: document.getElementById("humanizePreset").value,
+      hzGenre: document.getElementById("hzGenre").value || "",
+      hzVibe: document.getElementById("hzVibe").value || "",
+      hzEmotion: document.getElementById("hzEmotion").value || "",
+      hzDevice: document.getElementById("hzDevice").value || "",
+      hzSharp: document.getElementById("hzSharp").value || "",
+      placement: document.getElementById("placement").value,
+      delayRule: document.getElementById("delayRule").value,
+
+      sampleText: document.getElementById("sampleText").value || ""
+    };
+  }
+
+  function buildInputJson(inputs) {
+    return {
+      "rewrite_engine": {
+        "Input": {
+          "audience": inputs.audience,
+          "text_function": inputs.text_function,
+          "stakes": inputs.stakes,
+          "goals": inputs.goals,
+          "signals": inputs.signals,
+
+          "freq": {
+            "topK": inputs.topK,
+            "topP": inputs.topP,
+            "include_stopwords": inputs.includeStopwords,
+            "post_exclude": inputs.postExclude,
+            "extract_context": inputs.extractContext,
+            "extract_phrases": inputs.extractNgrams
+          },
+
+          "exclude": {
+            "terms": inputs.excludeTerms,
+            "phrases": inputs.excludePhrases
+          },
+
+          "rhetoric_custom": {
+            "phrases": inputs.customPhrases
+          },
+
+          "addendum_humanize": {
+            "mode": inputs.humanizeMode,
+            "preset": inputs.humanizePreset,
+            "custom": {
+              "genre": inputs.hzGenre.trim(),
+              "vibe": inputs.hzVibe.trim(),
+              "emotion": inputs.hzEmotion.trim(),
+              "device": inputs.hzDevice.trim(),
+              "sharpness": inputs.hzSharp.trim()
+            },
+            "placement": { "where": inputs.placement, "delay": inputs.delayRule }
+          }
+        }
+      }
+    };
+  }
+
+  function buildMergeJson(inputJson, runtimeJson) {
+    return {
+      "rewrite_engine_run": {
+        "Input": inputJson.rewrite_engine.Input,
+        "Runtime": runtimeJson.rewrite_engine.Runtime
+      }
+    };
+  }
+
+  // ---------------------------
+  // Render + constraints (soft, because Runtime size now depends on options)
+  // ---------------------------
+  const MERGE_MAX = 10000;
+
+  function render() {
+    const inputs = collectInputs();
+
+    const inputJson = buildInputJson(inputs);
+    const runtimeJson = buildRuntimeSkeleton();
+    evaluateRuntime(runtimeJson, inputs);
+    const mergeJson = buildMergeJson(inputJson, runtimeJson);
+
+    const sInput = pretty(inputJson);
+    const sRuntime = pretty(runtimeJson);
+    const sMerge = pretty(mergeJson);
+
+    document.getElementById("outInput").textContent = sInput;
+    document.getElementById("outRuntime").textContent = sRuntime;
+    document.getElementById("outMerge").textContent = sMerge;
+
+    const nInput = charCount(sInput);
+    const nRuntime = charCount(sRuntime);
+    const nMerge = charCount(sMerge);
+
+    document.getElementById("cInput").textContent = nInput;
+    document.getElementById("cRuntime").textContent = nRuntime;
+    document.getElementById("cMerge").textContent = nMerge;
+
+    // runtime range: we don't hard fail; we warn.
+    const runtimeOk = (nRuntime >= 6000 && nRuntime <= 9000); // widened because extra modules exist now
+    document.getElementById("runtimeOk").innerHTML = runtimeOk
+      ? `<span class="ok">✓ ok</span>`
+      : `<span class="no">✗ size</span>`;
+
+    const mergeOk = (nMerge < MERGE_MAX);
+    document.getElementById("mergeOk").innerHTML = mergeOk
+      ? `<span class="ok">✓ &lt;${MERGE_MAX}</span>`
+      : `<span class="no">✗ ≥${MERGE_MAX}</span>`;
+  }
+
+  // ---------------------------
+  // Events
+  // ---------------------------
+  document.querySelectorAll("select").forEach(el => el.addEventListener("change", ()=>{ render(); }));
+  document.querySelectorAll("input[type='checkbox']").forEach(el => el.addEventListener("change", render));
+  document.querySelectorAll("input[type='text']").forEach(el => el.addEventListener("input", render));
+
+  document.getElementById("excludeTerms").addEventListener("input", render);
+  document.getElementById("excludePhrases").addEventListener("input", render);
+  document.getElementById("sampleText").addEventListener("input", render);
+
+  document.getElementById("copyInput").addEventListener("click", () => copyText(document.getElementById("outInput").textContent));
+  document.getElementById("copyRuntime").addEventListener("click", () => copyText(document.getElementById("outRuntime").textContent));
+  document.getElementById("copyMerge").addEventListener("click", () => copyText(document.getElementById("outMerge").textContent));
+
+  document.getElementById("reset").addEventListener("click", () => {
+    document.getElementById("audience").value = "mixed";
+    document.getElementById("text_function").value = "exploratory";
+    document.getElementById("stakes").value = "medium";
+
+    document.getElementById("topK").value = "8";
+    document.getElementById("topP").value = "8";
+
+    document.getElementById("includeStopwords").checked = false;
+    document.getElementById("postExclude").checked = true;
+    document.getElementById("extractContext").checked = true;
+    document.getElementById("extractNgrams").checked = true;
+    document.getElementById("guardSize").checked = true;
+
+    document.getElementById("excludeTerms").value = "";
+    document.getElementById("excludePhrases").value = "";
+    document.getElementById("sampleText").value = "";
+
+    GOAL_OPTIONS.forEach(g => document.getElementById(`goals_${g.id}`).checked = (g.id === "auditability"));
+    SIGNAL_OPTIONS.forEach(s => document.getElementById(`signals_${s.id}`).checked = (s.id === "conceptual_instability_detected"));
+
+    phraseValues = Array(MAX_PHRASES).fill("");
+    renderPhraseInputs();
+
+    document.getElementById("humanizeMode").value = "none";
+    document.getElementById("humanizePreset").value = "formal_academic";
+    document.getElementById("hzGenre").value = "";
+    document.getElementById("hzVibe").value = "";
+    document.getElementById("hzEmotion").value = "";
+    document.getElementById("hzDevice").value = "";
+    document.getElementById("hzSharp").value = "";
+    document.getElementById("placement").value = "none";
+    document.getElementById("delayRule").value = "none";
+
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

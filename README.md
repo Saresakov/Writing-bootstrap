@@ -1,5 +1,11 @@
 # Corpus → Co-Domain
 
+## Version 1.1
+
+The v1.1 revision is available in [`V2/Corpus-to-CoDomain_v1.1_FIXED/`](V2/Corpus-to-CoDomain_v1.1_FIXED/). Open its `index.html` directly in a browser; the existing root `index.html` remains the earlier prototype. The release adds a unified prompt-and-analysis JSON export, clearer handling of edited presets when analysis settings change, improved offline layout fallback, and a separately documented policy-builder page. See the [v1.1 release README](V2/Corpus-to-CoDomain_v1.1_FIXED/README.md) for usage, included files, and limitations.
+
+The complete v1.1 folder is also packaged as [`V2/Corpus-to-CoDomain_v1.1_FIXED.zip`](V2/Corpus-to-CoDomain_v1.1_FIXED.zip).
+
 **Corpus → Co-Domain** is a local-first workbench for exploring writing style in Indonesian, English, or mixed-language text. It turns corpus evidence into a structured style profile and copyable paraphrase prompt presets.
 
 The project separates measured features from interpretations. It treats frequency and graph relationships as evidence to inspect, not as proof of meaning or authorial intent.

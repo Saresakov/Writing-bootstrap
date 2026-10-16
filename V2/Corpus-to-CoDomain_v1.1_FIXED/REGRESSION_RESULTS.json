@@ -1,0 +1,134 @@
+[
+  {
+    "id": "V01 default sample & eight metrics",
+    "status": "PASS"
+  },
+  {
+    "id": "V02 ngram, KWIC and heatmap",
+    "status": "PASS"
+  },
+  {
+    "id": "V03 graph SVG active without Bootstrap CDN",
+    "status": "PASS"
+  },
+  {
+    "id": "V04 edited prompt survives preset switching",
+    "status": "PASS"
+  },
+  {
+    "id": "V05 manual edits survive weight changes and show stale",
+    "status": "PASS"
+  },
+  {
+    "id": "V06 manual edits survive input T changes",
+    "status": "PASS"
+  },
+  {
+    "id": "V07 manual edits survive corpus reanalysis",
+    "status": "PASS"
+  },
+  {
+    "id": "V08 unedited new preset generates after state changes",
+    "status": "PASS"
+  },
+  {
+    "id": "V09 draft still recalled for A",
+    "status": "PASS"
+  },
+  {
+    "id": "V10 reset explicitly discards only active draft",
+    "status": "PASS"
+  },
+  {
+    "id": "V11 unified clipboard contains exactly one valid JSON object",
+    "status": "PASS"
+  },
+  {
+    "id": "V12 clipboard includes verbatim edited prompt",
+    "status": "PASS"
+  },
+  {
+    "id": "V13 snapshot has selected config + observed/heuristic/manual provenance",
+    "status": "PASS"
+  },
+  {
+    "id": "V14 source corpus omitted (no raw source key)",
+    "status": "PASS"
+  },
+  {
+    "id": "V15 JSON explains draft staleness",
+    "status": "PASS"
+  },
+  {
+    "id": "V16 prompt-only clipboard remains unchanged",
+    "status": "PASS"
+  },
+  {
+    "id": "V17 downloaded JSON matches clipboard bundle",
+    "status": "PASS"
+  },
+  {
+    "id": "V18 blocked clipboard exposes selectable fallback JSON",
+    "status": "PASS"
+  },
+  {
+    "id": "V19 built-in A-I algorithm checks",
+    "status": "PASS"
+  },
+  {
+    "id": "V20 upload markdown updates analysis",
+    "status": "PASS"
+  },
+  {
+    "id": "V21 HTML input does not execute injection in DOM",
+    "status": "PASS"
+  },
+  {
+    "id": "V22 no browser JS exceptions",
+    "status": "PASS"
+  },
+  {
+    "id": "V23 narrow screen controls present",
+    "status": "PASS"
+  },
+  {
+    "id": "V24 clear removes drafts and result",
+    "status": "PASS"
+  },
+  {
+    "id": "R01 phrase input retains all typed characters and focus",
+    "status": "PASS"
+  },
+  {
+    "id": "R02 next phrase slot appears",
+    "status": "PASS"
+  },
+  {
+    "id": "R03 second phrase input retains typing",
+    "status": "PASS"
+  },
+  {
+    "id": "R04 Copy Merge includes Input + Runtime JSON",
+    "status": "PASS"
+  },
+  {
+    "id": "R05 blocked clipboard reveals fallback",
+    "status": "PASS"
+  },
+  {
+    "id": "R06 no runtime errors",
+    "status": "PASS"
+  },
+  {
+    "id": "R07 phrase match respects token boundaries",
+    "status": "PASS"
+  },
+  {
+    "id": "R08 ngram does not cross sentence boundaries",
+    "status": "PASS"
+  },
+  {
+    "id": "R09 post-exclude actually changes top-K backfill semantics",
+    "status": "PASS"
+  }
+]
